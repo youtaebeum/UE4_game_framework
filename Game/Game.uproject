@@ -1,0 +1,48 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.18",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+    {
+      "Name": "Game",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "CoreUObject",
+        "Engine",
+        "GameCore"
+      ]
+    },
+    {
+      "Name": "Game_Editor",
+      "Type": "Editor",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "CoreUObject",
+        "Engine",
+        "GameCore",
+        "GameCore_Editor"
+      ]
+    },
+    {
+      "Name": "GameCore",
+      "Type": "Runtime",
+      "LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "CoreUObject",
+        "Engine"
+      ]
+    },
+       {
+			"Name": "GameCore_Editor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+      "AdditionalDependencies": [
+        "CoreUObject",
+        "Engine",
+        "GameCore"
+      ]
+		}
+	]
+}
