@@ -5,7 +5,6 @@
 #include "gamecore_minimal.h"
 #include "object_pool.h"
 #include "object_pool_actor.h"
-#include "base_actor/base_actor.h"
 
 #include "object_pool_manager.generated.h"
 
@@ -31,14 +30,14 @@ public:
 private:
 	TMap<FName, F_object_pool<void>*>			 m_object_pool;
 	TMap<UClass*, F_object_pool<UObject>*>		 m_uobject_pool;
-	TMap<UClass*, F_object_pool<A_base_actor>*>	 m_actor_pool;
+	TMap<UClass*, F_object_pool<AActor>*>	 m_actor_pool;
 
 	template<typename T> F_object_pool<void>*		    get_object_pool();
 	template<typename T> F_object_pool<UObject>*	    get_uobject_pool();
-	template<typename T> F_object_pool<A_base_actor>*   get_actor_pool();
+	template<typename T> F_object_pool<AActor>*   get_actor_pool();
 
-	F_object_pool<UObject>*	       get_uobject_pool(UClass* pClass);
-	F_object_pool<A_base_actor>*   get_actor_pool(UClass* pClass);
+	F_object_pool<UObject>*	get_uobject_pool(UClass* pClass);
+	F_object_pool<AActor>*	get_actor_pool(UClass* pClass);
 
 public:
 	template<typename T> T*   get_object();
@@ -46,8 +45,8 @@ public:
 	template<typename T> bool is_pooled_object(T* _p_ptr);
 
 	template<typename T> T* get_actor();
-	void return_actor(A_base_actor* _p_actor);
-	bool is_pooled_actor(A_base_actor* _p_actor);
+	void return_actor(AActor* _p_actor);
+	bool is_pooled_actor(AActor* _p_actor);
 
 	template<typename T> T* get_uobject();
 	void return_uobject(UObject* _p_uobject);
@@ -94,18 +93,18 @@ F_object_pool<UObject>* U_object_pool_manager::get_uobject_pool()
 }
 
 template<typename T> 
-F_object_pool<A_base_actor>*  U_object_pool_manager::get_actor_pool()
+F_object_pool<AActor>*  U_object_pool_manager::get_actor_pool()
 {
-	static_assert(TPointerIsConvertibleFromTo<T, const A_base_actor>::Value == 1, "You cannot use m_actor_pool with non A_base_actor classes.");
+	static_assert(TPointerIsConvertibleFromTo<T, const AActor>::Value == 1, "You cannot use m_actor_pool with non A_base_actor classes.");
 	static_assert(F_object_pool_type<T>::Value == 1, "not regist classes.");
 
 	UClass* p_uclass = T::StaticClass();
 	GC_CHECK(p_uclass != nullptr);
 
-	F_object_pool<A_base_actor>* p_pool = GC_UTILTY::safe_map_value< F_object_pool<A_base_actor> >(_get_instance()->m_actor_pool.Find(p_uclass));
+	F_object_pool<AActor>* p_pool = GC_UTILTY::safe_map_value< F_object_pool<AActor> >(_get_instance()->m_actor_pool.Find(p_uclass));
 	if (p_pool == nullptr)
 	{
-		p_pool = GC_New F_object_pool<A_base_actor>();
+		p_pool = GC_New F_object_pool<AActor>();
 		_get_instance()->m_actor_pool.Add(p_uclass, p_pool);
 	}
 
@@ -126,10 +125,10 @@ T* U_object_pool_manager::get_object()
 template<typename T> 
 T* U_object_pool_manager::get_actor()
 {
-	static_assert(TPointerIsConvertibleFromTo<T, const A_base_actor>::Value == 1, "You cannot use m_actor_pool with non A_base_actor classes.");
+	static_assert(TPointerIsConvertibleFromTo<T, const AActor>::Value == 1, "You cannot use m_actor_pool with non A_base_actor classes.");
 	static_assert(F_object_pool_type<T>::Value == 1, "not regist classes.");
 
-	F_object_pool<A_base_actor>* p_pool = _get_instance()->get_actor_pool<T>();
+	F_object_pool<AActor>* p_pool = _get_instance()->get_actor_pool<T>();
 	GC_CHECK(p_pool != nullptr);
 
 	return p_pool->get_object<T>(F_object_pool_type<T>::Capacity);
@@ -172,31 +171,3 @@ bool U_object_pool_manager::is_pooled_object(T* _p_ptr)
 
 	return p_pool->IsPooled(_p_ptr);
 }
-
-/*
-template<typename T>
-bool U_object_pool_manager::is_pooled_actor(T* _p_actor)
-{
-	static_assert(TPointerIsConvertibleFromTo<T, const A_base_actor>::Value == 1, "You cannot use m_actor_pool with non A_base_actor classes.");
-	static_assert(F_object_pool_type<T>::Value == 1, "not regist classes.");
-
-	GC_CHECK(_p_actor != nullptr);
-
-	F_object_pool<A_base_actor>* p_pool = _get_instance()->get_actor_pool<T>();
-	GC_CHECK(p_pool != nullptr);
-
-	return p_pool->IsPooled(_p_actor);
-}
-
-template<typename T> 
-bool U_object_pool_manager::is_pooled_uobject(T* pObject)
-{
-	static_assert(TPointerIsConvertibleFromTo<T, const UObject>::Value == 1, "You cannot use m_uobject_pool with non UObject classes.");
-	static_assert(F_object_pool_type<T>::Value == 1, "not regist classes.");
-	GC_CHECK(pObject != nullptr);
-
-	F_object_pool<UObject>* p_pool = _get_instance()->get_uobject_pool<T>();
-	GC_CHECK(p_pool != nullptr);
-
-	return p_pool->IsPooled(pObject);
-}*/

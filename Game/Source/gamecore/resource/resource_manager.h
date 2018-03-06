@@ -6,6 +6,13 @@
 #include "resource_loader.h"
 #include "resource_manager.generated.h"
 
+//------------------------------------------------------------------------------------------------------
+// 앞으로 해야할 것 들
+// 1. Actor의 경우 거리 소팅 기능 
+// 2. 비동기, 동기 그룹 나누기
+// 3. 우선순위 property 작업
+//------------------------------------------------------------------------------------------------------
+
 UCLASS()
 class GAMECORE_API U_resource_manager : public UObject, public F_singleton<U_resource_manager>
 {
@@ -17,7 +24,7 @@ public:
 	virtual void _tick(float _f_delta_seconds);
 
 private:
-	int32					   m_i_resource_load_capacity = 10;	// 한번에 로드되는 사이즈
+	int32					   m_i_resource_load_capacity = 10;	
 	TArray<F_resource_loader*> m_load_list;
 	TMap<UClass*, TArray<F_resource_loader*>*> m_map_wait_list;
 	
@@ -31,6 +38,3 @@ public:
 		delegate_resource_load_fail _delegate_load_fail);
 
 };
-
-//FStreamingManager		// 비동기 로딩
-//StaticLoadObject()	// 동기 로딩

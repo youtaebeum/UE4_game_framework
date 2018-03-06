@@ -4,6 +4,7 @@
 #include "gamecore_include.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Engine/SkeletalMesh.h"
 #include "Engine/AssetManager.h"
@@ -67,14 +68,17 @@ void A_base_unit::Tick(float DeltaTime)
 
 void A_base_unit::_initialize(uint32 _uiUniqIndex)
 {
-	Super::_initialize(_uiUniqIndex);
+	m_ui_uniq_index = _uiUniqIndex;
 
+	//////////////////////////////////////////////////////////////////////////
+	//tempcode
 	CharacterSKIndex = FMath::RandRange(0, _Assets.Num() - 1);
-	get_gamecore()->load_resource(USkeletalMesh::StaticClass(),
+	gGameCore->load_resource(USkeletalMesh::StaticClass(),
 		eResourceLoadType,
 		_Assets[CharacterSKIndex],
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::LoadComplite),
 		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::LoadFail));
+	///////////////////////////////////////////////////////////////////////////
 }
 
 void A_base_unit::_reset()
@@ -84,7 +88,7 @@ void A_base_unit::_reset()
 
 void A_base_unit::LoadComplite(const FStringAssetReference& _AssetRef, UClass* _p_class)
 {
-/*	if (get_gamecore()->is_pooled_actor(this))
+/*	if (gGameCore->is_pooled_actor(this))
 	{
 
 	}*/

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "gamecore_minimal.h"
-#include "base_actor/base_actor.h"
+#include "GameFramework/Actor.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 template<typename TObj>
@@ -201,17 +201,17 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 template<>
-class F_object_pool<A_base_actor>
+class F_object_pool<AActor>
 {
 	friend class U_object_pool_manager;
 
 protected:
 	int32				m_i_create_count = 0;
 	int32				m_i_give_count = 0;
-	TArray<A_base_actor*>		m_stack_list;
+	TArray<AActor*>		m_stack_list;
 
 #if WITH_EDITOR
-	TArray<A_base_actor*>		m_given_list;
+	TArray<AActor*>		m_given_list;
 #endif
 
 public:
@@ -256,7 +256,7 @@ public:
 	}
 
 	template<typename FT>
-	void return_object(A_base_actor* _p_object)
+	void return_object(AActor* _p_object)
 	{
 #if WITH_EDITOR
 		GC_CHECK(m_stack_list.Find(_p_object) == INDEX_NONE)
@@ -304,7 +304,7 @@ public:
 #endif
 	}
 
-	bool IsPooled(A_base_actor* p_object)
+	bool IsPooled(AActor* p_object)
 	{
 		int32 iReturn = m_stack_list.Find(p_object);
 		if (iReturn != INDEX_NONE)

@@ -11,7 +11,7 @@ void U_resource_manager::_initialize()
 void U_resource_manager::_reset()
 {
 	for (int i = 0; i < m_load_list.Num(); ++i)	{
-		get_gamecore()->return_object<F_resource_loader>(m_load_list[i]);
+		gGameCore->return_object<F_resource_loader>(m_load_list[i]);
 	}
 	m_load_list.Empty();
 
@@ -20,7 +20,7 @@ void U_resource_manager::_reset()
 		TArray<F_resource_loader*>* pLoader = Elem.Value;
 		for (int i = 0; i < pLoader->Num(); ++i)
 		{
-			get_gamecore()->return_object<F_resource_loader>((*pLoader)[i]);
+			gGameCore->return_object<F_resource_loader>((*pLoader)[i]);
 		}
 		Elem.Value->Empty();
 		GC_Delete(Elem.Value);
@@ -38,7 +38,7 @@ void U_resource_manager::_tick(float _f_delta_seconds)
 		if (m_e_load_state == e_resource_load_state::complete ||
 			m_e_load_state == e_resource_load_state::fail)
 		{
-			get_gamecore()->return_object<F_resource_loader>(m_load_list[i]);
+			gGameCore->return_object<F_resource_loader>(m_load_list[i]);
 			m_load_list.RemoveAt(i++);
 		}
 	}
@@ -79,7 +79,7 @@ void U_resource_manager::load_resource(
 	if (pLoadList == nullptr)
 	{
 		pLoadList = GC_New(TArray<F_resource_loader*>);
-		F_resource_loader* pLoader = get_gamecore()->get_object<F_resource_loader>();
+		F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
 
 		pLoader->clear();
 		pLoader->set_load_info(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail);
@@ -89,7 +89,7 @@ void U_resource_manager::load_resource(
 	}
 	else
 	{
-		F_resource_loader* pLoader = get_gamecore()->get_object<F_resource_loader>();
+		F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
 
 		pLoader->clear();
 		pLoader->set_load_info(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail);

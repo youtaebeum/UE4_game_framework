@@ -2,8 +2,12 @@
 
 #include "object_pool_manager.h"
 
+#include "gamecore_include.h"
+#include "gamecore_manager.h"
+
 void U_object_pool_manager::_initialize()
 {
+	U_object_pool_manager::_get_instance()->_spawn_manager_actor<A_object_pool_actor>(gGameCore->get_game_instance()->GetWorld());
 }
 
 void U_object_pool_manager::_reset() 
@@ -53,25 +57,25 @@ bool U_object_pool_manager::is_pooled_uobject(UObject* _p_uobject)
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-F_object_pool<A_base_actor>* U_object_pool_manager::get_actor_pool(UClass* p_uclass)
+F_object_pool<AActor>* U_object_pool_manager::get_actor_pool(UClass* p_uclass)
 {
 	GC_CHECK(p_uclass != nullptr);
-	F_object_pool<A_base_actor>* p_pool = GC_UTILTY::safe_map_value< F_object_pool<A_base_actor> >(_get_instance()->m_actor_pool.Find(p_uclass));
+	F_object_pool<AActor>* p_pool = GC_UTILTY::safe_map_value< F_object_pool<AActor> >(_get_instance()->m_actor_pool.Find(p_uclass));
 	return p_pool;
 }
 
-void U_object_pool_manager::return_actor(A_base_actor* _p_actor)
+void U_object_pool_manager::return_actor(AActor* _p_actor)
 {
 	GC_CHECK(_p_actor != nullptr);
-	F_object_pool<A_base_actor>* p_pool = _get_instance()->get_actor_pool(_p_actor->GetClass());
+	F_object_pool<AActor>* p_pool = _get_instance()->get_actor_pool(_p_actor->GetClass());
 	GC_CHECK(p_pool != nullptr);
-	p_pool->return_object<A_base_actor>(_p_actor);
+	p_pool->return_object<AActor>(_p_actor);
 }
 
-bool U_object_pool_manager::is_pooled_actor(A_base_actor* _p_actor)
+bool U_object_pool_manager::is_pooled_actor(AActor* _p_actor)
 {
 	GC_CHECK(_p_actor != nullptr);
-	F_object_pool<A_base_actor>* p_pool = _get_instance()->get_actor_pool(_p_actor->GetClass());
+	F_object_pool<AActor>* p_pool = _get_instance()->get_actor_pool(_p_actor->GetClass());
 	GC_CHECK(p_pool != nullptr);
 	return p_pool->IsPooled(_p_actor);
 }

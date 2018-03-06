@@ -4,16 +4,13 @@
 
 #include "gamecore_minimal.h"
 
-#include "base_actor/base_actor.h"
+#include "GameFramework/Pawn.h"
 #include "base_unit.generated.h"
 
-//////////////////////////////////////////////////////////////////////////
-//tempcode
 REGIIST_OBJECTPOOLTYPE(A_base_unit, OBJECT_POOL_DEFAULT_SIZE)
-//////////////////////////////////////////////////////////////////////////
 
 UCLASS()
-class GAMECORE_API A_base_unit : public A_base_actor
+class GAMECORE_API A_base_unit : public APawn
 {
 	GENERATED_BODY()
 	
@@ -26,8 +23,11 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-private:
-	UPROPERTY(Category = Unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+protected:
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	uint32 m_ui_uniq_index = 0;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* Mesh;
 
 public:

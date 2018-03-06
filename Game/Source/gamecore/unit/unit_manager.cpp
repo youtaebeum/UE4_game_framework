@@ -1,8 +1,11 @@
 #include "unit_manager.h"
+
 #include "gamecore_include.h"
+#include "gamecore_manager.h"
 
 void U_unit_manager::_initialize()
 {
+	U_unit_manager::_get_instance()->_spawn_manager_actor<AActor>(gGameCore->GetWorld());
 }
 
 void U_unit_manager::_reset()
@@ -33,7 +36,6 @@ A_base_unit* U_unit_manager::get_unit(uint32 _i_uniq_index)
 	return p_unit;
 }
 
-
 void U_unit_manager::despawn_unit(uint32 _i_uniq_index)
 {
 	A_base_unit* pUnit = GC_UTILTY::safe_map_value<A_base_unit>(m_map_unit.Find(_i_uniq_index));
@@ -46,7 +48,6 @@ void U_unit_manager::despawn_unit(uint32 _i_uniq_index)
 	m_map_unit.Remove(_i_uniq_index);
 }
 
-
 void U_unit_manager::despawn_unit(A_base_unit* _p_unit)
 {
 	GC_CHECK(_p_unit != nullptr)
@@ -56,5 +57,5 @@ void U_unit_manager::despawn_unit(A_base_unit* _p_unit)
 	_get_instance()->_DetachToManagerActor(_p_unit);
 #endif
 
-	U_object_pool_manager::_get_instance()->return_actor(Cast<A_base_actor>(_p_unit));
+	gGameCore->return_actor(_p_unit);
 }

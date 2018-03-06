@@ -13,6 +13,17 @@ namespace GC_UTILTY
 	GAMECORE_API void DetachParentActor(AActor* _p_actor);
 	GAMECORE_API void DetachAllChildActors(AActor* _p_actor);
 
+	template<typename TEnum>
+	FString get_enum_to_string(const FString& _str, TEnum _enum) 
+	{
+		const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, *_str, true);
+		if (!enumPtr) {
+			return FString("Invalid");
+		}
+
+		return enumPtr->GetNameStringByIndex((int32)_enum);
+	}
+
 	template<typename T> T* safe_map_value(T** ppAddress){
 		return  (ppAddress != nullptr) ? *ppAddress : nullptr;
 	};

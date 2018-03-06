@@ -17,17 +17,16 @@ public:
 	virtual void _tick(float _f_delta_seconds);
 
 private:
-	uint32				  m_ui_create_count = 0;
+	uint32					   m_ui_create_count = 0;
 	TMap<uint32, A_base_unit*> m_map_unit;
 
 public:
 	template<typename TF> uint32	spawn_unit(const F_spawn_unit_desc& _desc = F_spawn_unit_desc::get());
 	void		despawn_unit(uint32 _i_uniq_index);
-	void		despawn_unit(A_base_unit* _p_unit);
-
 	A_base_unit* get_unit(uint32 _i_uniq_index);
 
 private:
+	void despawn_unit(A_base_unit* _p_unit);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,7 +35,7 @@ uint32 U_unit_manager::spawn_unit(const F_spawn_unit_desc& _desc)
 {
 	m_ui_create_count++;
 
-	A_base_unit* pUnit = U_object_pool_manager::_get_instance()->get_actor<TF>();
+	A_base_unit* pUnit = gGameCore->get_actor<TF>();
 
 	pUnit->eResourceLoadType = _desc._e_load_type;
 	pUnit->_initialize(m_ui_create_count);

@@ -41,7 +41,7 @@ namespace GC_UTILTY
 		GC_CHECK(U_gamecore_manager::_get_instance() != nullptr);
 		GC_CHECK(U_gamecore_manager::_get_instance()->get_game_instance() != nullptr);
 
-		get_gamecore()->get_game_instance()->GetWorld()->DestroyActor(_p_actor);
+		gGameCore->get_game_instance()->GetWorld()->DestroyActor(_p_actor);
 	}
 
 	void DetachParentActor(AActor* _p_actor)
