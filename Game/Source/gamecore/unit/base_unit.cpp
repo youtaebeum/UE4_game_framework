@@ -144,7 +144,7 @@ void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _Asse
 		GC_WARNING(TEXT("[A_base_unit::load_complite_anim_instance] %s"), *_AssetRef.GetAssetPathString());
 	}
 
-	reset_master_pos_componenet();
+	//reset_master_pos_componenet();
 }
 
 void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
@@ -153,6 +153,19 @@ void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
+/*
+void A_base_unit::regist_cdo_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet)
+{
+	GC_CHECK(m_p_root_mesh_componenet != nullptr)
+	GC_CHECK(_p_mesh_componenet!=nullptr)
+	GC_CHECK(m_p_root_mesh_componenet != _p_mesh_componenet)
+
+	_p_mesh_componenet->SetupAttachment(m_p_root_mesh_componenet);
+	_p_mesh_componenet->SetMasterPoseComponent(m_p_root_mesh_componenet);
+	_p_mesh_componenet->RegisterComponent();
+
+	m_map_child_mesh.Add(_ui_index, _p_mesh_componenet);
+}*/
 
 void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path)
 {
@@ -183,7 +196,6 @@ void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UCl
 		{
 			p_child_mesh->SetupAttachment(m_p_root_mesh_componenet);
 			p_child_mesh->SetMasterPoseComponent(m_p_root_mesh_componenet);
-			p_child_mesh->UpdateMasterBoneMap();
 			p_child_mesh->RegisterComponent();
 		}
 		
@@ -198,21 +210,3 @@ void A_base_unit::load_fail_mesh(const FStringAssetReference& _AssetRef, UClass*
 {
 	GC_WARNING(TEXT("[A_base_unit::load_fail_mesh] %s"), *_AssetRef.GetAssetPathString());
 }
-
-void A_base_unit::reset_master_pos_componenet()
-{
-	for (auto iter : m_map_child_mesh)
-	{
-		if (m_p_root_mesh_componenet != iter.Value)
-		{
-			iter.Value->SetupAttachment(m_p_root_mesh_componenet);
-			iter.Value->SetMasterPoseComponent(m_p_root_mesh_componenet);
-		}
-
-		iter.Value->UpdateMasterBoneMap();
-		iter.Value->RegisterComponent();
-	}
-}
-
-
-//--------------------------------------------------------------------------------------------------------------------------------

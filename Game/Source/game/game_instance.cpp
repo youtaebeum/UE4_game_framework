@@ -3,6 +3,8 @@
 #include "gamecore_include.h"
 
 #include "unit_actor/player_unit.h"
+#include "unit_actor/player_prediction_unit.h"
+
 #include "GameFramework/PlayerController.h"
 
 void Ugame_instance::Init()
@@ -119,7 +121,7 @@ void Ugame_instance::input_event_touch(float _f_axis)
 	{
 		if (m_ui_self_unit == 0)
 		{
-			F_spawn_unit_desc desc;
+			/*F_spawn_unit_desc desc;
 			desc._e_load_type = e_rsource_loading_type::instantly;
 			m_ui_self_unit = gGameCore->spawn_unit<A_player_unit>(desc);
 			gGameCore->set_controll_unit(m_ui_self_unit);
@@ -128,7 +130,12 @@ void Ugame_instance::input_event_touch(float _f_axis)
 
 			p_unit->change_mesh(0, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_body_0014.hero_meliodas_body_0014'"));
 			p_unit->change_mesh(1, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_head_0000.hero_meliodas_head_0000'"));
-			p_unit->set_anim_instance(TEXT("AnimBlueprint'/Game/Meliodas/anim_bp_meliodas.anim_bp_meliodas_C'"));
+			p_unit->set_anim_instance(TEXT("AnimBlueprint'/Game/Meliodas/anim_bp_meliodas.anim_bp_meliodas_C'"));*/
+
+			F_spawn_unit_desc desc;
+			desc._e_load_type = e_rsource_loading_type::instantly;
+			m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
+			gGameCore->set_controll_unit(m_ui_self_unit);
 		}
 	}
 

@@ -64,12 +64,12 @@ private:
 	//--------------------------------------------------------------------------------------------------------------------------------
 	// mesh
 public:
+	//void regist_cdo_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet);
 	void change_mesh(int32 _ui_index, const FString& _str_path);
 	
 private:
 	void load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index);
 	void load_fail_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index);
-	void reset_master_pos_componenet();
 	//--------------------------------------------------------------------------------------------------------------------------------
 	//~ Begin UObject Interface
 	// virtual void PostInitProperties() override;	인스턴스별 디자이너 설정 프로퍼티를 지원하기 위해, 주어진 오브젝트에 대한 인스턴스 데이터에서 값을 로드하기도 합니다
