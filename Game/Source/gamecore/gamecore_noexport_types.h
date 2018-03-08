@@ -36,7 +36,7 @@ public:
 	UPROPERTY()
 	FRotator _r_rotator = FRotator::ZeroRotator;
 
-	e_rsource_loading_type _e_load_type;
+	e_rsource_loading_type _e_load_type = e_rsource_loading_type::instantly;
 
 	static struct F_spawn_unit_desc & get()
 	{

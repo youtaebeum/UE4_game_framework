@@ -68,4 +68,16 @@ namespace GC_UTILTY
 		int32 i32 = *(int32*)&ui64;
 		return i32;
 	}
+
+	float get_axis_delta_rotation(float _f_rotation_rate, float _f_delta_time)
+	{
+		return (_f_rotation_rate >= 0.f) ? (_f_rotation_rate * _f_delta_time) : 360.f;
+	};
+
+	FRotator get_delta_rotation(FRotator _r_rotation, float _r_delta_time)
+	{
+		return FRotator(get_axis_delta_rotation(_r_rotation.Pitch, _r_delta_time),
+			get_axis_delta_rotation(_r_rotation.Yaw, _r_delta_time),
+			get_axis_delta_rotation(_r_rotation.Roll, _r_delta_time));
+	}
 }

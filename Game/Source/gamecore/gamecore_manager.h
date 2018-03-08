@@ -46,7 +46,10 @@ public:
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Resource Manager
-	void load_resource(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail);
+	void load_resource(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail, int32 _i_custom_index = 1);
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Scene Manager
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Unit Manager

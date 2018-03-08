@@ -7,6 +7,7 @@
 #include "resource/resource_manager.h"
 #include "unit/unit_manager.h"
 #include "input/input_manager.h"
+#include "scene/scene_manager.h"
 
 #include "Engine/World.h"
 
@@ -22,13 +23,15 @@ void U_gamecore_manager::_initialize()
 		U_resource_manager::_make_instance();
 		U_unit_manager::_make_instance();
 		U_input_manager::_make_instance();
+		U_scene_manager::_make_instance();
 	}
 	
 	{
 		U_object_pool_manager::_get_instance()->_initialize();	
 		U_resource_manager::_get_instance()->_initialize();
 		U_unit_manager::_get_instance()->_initialize();			
-		U_input_manager::_get_instance()->_initialize();		
+		U_input_manager::_get_instance()->_initialize();
+		U_scene_manager::_get_instance()->_initialize();
 	}
 }
 
@@ -39,6 +42,7 @@ void U_gamecore_manager::_reset()
 	U_unit_manager::_remove_instance();
 	U_resource_manager::_remove_instance();
 	U_object_pool_manager::_remove_instance();
+	U_scene_manager::_remove_instance();
 
 	m_p_game_instance = nullptr;
 }
@@ -50,6 +54,7 @@ void U_gamecore_manager::_tick(float _f_delta_seconds)
 	U_resource_manager::_get_instance()->_tick(_f_delta_seconds);
 	U_unit_manager::_get_instance()->_tick(_f_delta_seconds);
 	U_input_manager::_get_instance()->_tick(_f_delta_seconds);
+	U_scene_manager::_get_instance()->_tick(_f_delta_seconds);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,9 +74,9 @@ float U_gamecore_manager::get_world_delta_time()
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void U_gamecore_manager::load_resource(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail)
+void U_gamecore_manager::load_resource(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail, int32 _i_custom_index)
 {
-	U_resource_manager::_get_instance()->load_resource(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail);
+	U_resource_manager::_get_instance()->load_resource(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail, _i_custom_index);
 }
 
 void  U_gamecore_manager::despawn_unit(uint32 _i_uniq_index) 

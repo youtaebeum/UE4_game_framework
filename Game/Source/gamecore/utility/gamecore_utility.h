@@ -33,5 +33,7 @@ namespace GC_UTILTY
 	};
 
 	GAMECORE_API int32 GetTickCount();
-	
+
+	GAMECORE_API float    get_axis_delta_rotation(float _f_rotation_rate, float _f_delta_time);
+	GAMECORE_API FRotator get_delta_rotation(FRotator _r_rotation, float _r_delta_time);
 }  

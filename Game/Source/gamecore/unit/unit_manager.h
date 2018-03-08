@@ -37,7 +37,6 @@ uint32 U_unit_manager::spawn_unit(const F_spawn_unit_desc& _desc)
 
 	A_base_unit* pUnit = gGameCore->get_actor<TF>();
 
-	pUnit->eResourceLoadType = _desc._e_load_type;
 	pUnit->_initialize(m_ui_create_count);
 	pUnit->SetActorLocation(_desc._v_location);
 	pUnit->SetActorRotation(_desc._r_rotator);

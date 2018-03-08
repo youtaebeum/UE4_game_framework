@@ -12,7 +12,10 @@ F_resource_loader::~F_resource_loader()
 	clear();
 }
 
-void F_resource_loader::set_load_info(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail)
+void F_resource_loader::set_load_info(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, 
+	delegate_resource_load_complete _delegate_load_complete, 
+	delegate_resource_load_fail _delegate_load_fail,
+	int32 _i_custom_index)
 {
 	GC_CHECK(m_e_load_state == e_resource_load_state::none)
 	GC_CHECK(_str_path.IsEmpty() == false)
@@ -25,6 +28,7 @@ void F_resource_loader::set_load_info(UClass* _p_class, e_rsource_loading_type _
 	m_asset_ref = _str_path;
 	m_delegate_load_complte = _delegate_load_complete;
 	m_delegate_load_fail = _delegate_load_fail;
+	m_i_custom_index = _i_custom_index;
 }
 
 void F_resource_loader::clear()
@@ -39,6 +43,7 @@ void F_resource_loader::clear()
 	m_asset_ref.Reset();
 	m_delegate_load_complte.Unbind();
 	m_delegate_load_fail.Unbind();
+	m_i_custom_index = -1;
 }
 
 void F_resource_loader::load_start()
@@ -53,13 +58,13 @@ void F_resource_loader::load_start()
 		if (pLoadedObject == nullptr)
 		{
 			GC_WARNING(TEXT("[F_resource_loader::LoadInstantly] LoadFail(%s)"), *m_str_asset_path);
-			m_delegate_load_fail.Execute(m_asset_ref, m_p_class);
+			m_delegate_load_fail.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 			m_e_load_state = e_resource_load_state::fail;
 		}
 		else
 		{
 			GC_LOG(TEXT("[F_resource_loader::LoadInstantly] LoadComplete(%s)"), *m_str_asset_path);
-			m_delegate_load_complte.Execute(m_asset_ref, m_p_class);
+			m_delegate_load_complte.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 			m_e_load_state = e_resource_load_state::complete;
 		}
 	}break;
@@ -71,7 +76,7 @@ void F_resource_loader::load_start()
 		if (NewHandle.IsValid() == false)
 		{
 			GC_WARNING(TEXT("[F_resource_loader::LoadASync] LoadFail(%s)"), *m_str_asset_path);
-			m_delegate_load_fail.Execute(m_asset_ref, m_p_class);
+			m_delegate_load_fail.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 			m_e_load_state = e_resource_load_state::fail;
 		}
 	}break;
@@ -81,7 +86,7 @@ void F_resource_loader::load_start()
 void F_resource_loader::load_deferred()
 {
 	GC_LOG(TEXT("[F_resource_loader::load_deferred] LoadComplete(%s)"), *m_str_asset_path);
-	m_delegate_load_complte.Execute(m_asset_ref, m_p_class);
+	m_delegate_load_complte.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 	m_e_load_state = e_resource_load_state::complete;
 };
 

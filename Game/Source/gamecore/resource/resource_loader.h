@@ -21,11 +21,17 @@ private:
 	FString				   m_str_asset_path;
 	FStringAssetReference  m_asset_ref;
 
+	int32				   m_i_custom_index = 0;
+
 	delegate_resource_load_complete  m_delegate_load_complte;
 	delegate_resource_load_fail		 m_delegate_load_fail;
 
 public:
-	void set_load_info(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail);
+	void set_load_info(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, 
+		delegate_resource_load_complete _delegate_load_complete, 
+		delegate_resource_load_fail _delegate_load_fail, 
+		int32 _i_custom_index = -1);
+
 	void clear();
 
 	void load_start();

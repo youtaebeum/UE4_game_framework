@@ -36,7 +36,7 @@ template<typename T> struct F_object_pool_type {
 
 
 #pragma region DelegateDefine
-DECLARE_DELEGATE_TwoParams(delegate_resource_load_complete, const FStringAssetReference&, UClass*);
-DECLARE_DELEGATE_TwoParams(delegate_resource_load_fail, const FStringAssetReference&, UClass*);
+DECLARE_DELEGATE_ThreeParams(delegate_resource_load_complete, const FStringAssetReference&, UClass*, int32);
+DECLARE_DELEGATE_ThreeParams(delegate_resource_load_fail, const FStringAssetReference&, UClass*, int32);
 #pragma endregion
 

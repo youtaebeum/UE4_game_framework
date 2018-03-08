@@ -2,12 +2,18 @@
 
 #include "base_unit.h"
 #include "gamecore_include.h"
+#include "gamecore_manager.h"
+
+#include "components/unit_movement_component.h"
+#include "animation/unit_anim_instance.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 #include "Engine/SkeletalMesh.h"
 #include "Engine/AssetManager.h"
+#include "Engine/CollisionProfile.h"
+
 
 // Sets default values.
 A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
@@ -15,43 +21,47 @@ A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_ui_uniq_index = 0;
+	//////////////////////////////////////////////////////////////////////////
+	static FName scene_component_name(TEXT("root_scene"));
+	m_p_root_scene_componenet = CreateDefaultSubobject<USceneComponent>(scene_component_name);
+	m_p_root_scene_componenet->Mobility = EComponentMobility::Movable;
+	RootComponent = m_p_root_scene_componenet;
 
-	Mesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>(TEXT("TestMesh"));
-	if (Mesh)
-	{
-		Mesh->AlwaysLoadOnClient = true;
-		Mesh->AlwaysLoadOnServer = true;
-		Mesh->bOwnerNoSee = false;
-		Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
-		Mesh->bCastDynamicShadow = true;
-		Mesh->bAffectDynamicIndirectLighting = true;
-		Mesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-		Mesh->SetupAttachment(GetRootComponent());
-		static FName MeshCollisionProfileName(TEXT("CharacterMesh"));
-		Mesh->SetCollisionProfileName(MeshCollisionProfileName);
-		Mesh->bGenerateOverlapEvents = false;
-		Mesh->SetCanEverAffectNavigation(false);
-	}
+	//////////////////////////////////////////////////////////////////////////
+	static FName capsule_component_name(TEXT("root_collision"));
+	m_p_capsule_componenet = CreateDefaultSubobject<UCapsuleComponent>(capsule_component_name);
+	m_p_capsule_componenet->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+	m_p_capsule_componenet->CanCharacterStepUpOn = ECB_No;
+	m_p_capsule_componenet->bShouldUpdatePhysicsVolume = true;
+	m_p_capsule_componenet->bCheckAsyncSceneOnMove = false;
+	m_p_capsule_componenet->SetCanEverAffectNavigation(false);
+	m_p_capsule_componenet->SetupAttachment(RootComponent);
+	m_p_capsule_componenet->bDynamicObstacle = true;
 
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Barbarous.SK_CharM_Barbarous'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/sk_CharM_Base.sk_CharM_Base'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Bladed.SK_CharM_Bladed'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Cardboard.SK_CharM_Cardboard'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Forge.SK_CharM_Forge'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_FrostGiant.SK_CharM_FrostGiant'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Golden.SK_CharM_Golden'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Natural.SK_CharM_Natural'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Pit.SK_CharM_Pit'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Ragged0.SK_CharM_Ragged0'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_RaggedElite.SK_CharM_RaggedElite'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Ram.SK_CharM_Ram'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Robo.SK_CharM_Robo'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Shell.SK_CharM_Shell'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_solid.SK_CharM_solid'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Standard.SK_CharM_Standard'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Tusk.SK_CharM_Tusk'");
-	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Warrior.SK_CharM_Warrior'");
+	//////////////////////////////////////////////////////////////////////////
+	static FName mesh_componenet_name(TEXT("unit_mesh"));
+	static FName mesh_collision_profile_name(TEXT("unit_mesh"));
+	m_p_root_mesh_componenet = CreateDefaultSubobject<USkeletalMeshComponent>(mesh_componenet_name);
+	m_p_root_mesh_componenet->AlwaysLoadOnClient = true;
+	m_p_root_mesh_componenet->AlwaysLoadOnServer = true;
+	m_p_root_mesh_componenet->bOwnerNoSee = false;
+	m_p_root_mesh_componenet->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
+	m_p_root_mesh_componenet->bCastDynamicShadow = true;
+	m_p_root_mesh_componenet->bAffectDynamicIndirectLighting = true;
+	m_p_root_mesh_componenet->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+	m_p_root_mesh_componenet->SetupAttachment(RootComponent);
+	m_p_root_mesh_componenet->SetCollisionProfileName(mesh_collision_profile_name);
+	m_p_root_mesh_componenet->bGenerateOverlapEvents = false;
+	m_p_root_mesh_componenet->SetCanEverAffectNavigation(false);
+	m_p_root_mesh_componenet->SetRelativeRotation(FRotator(0, -90.0f, 0));
+
+	//////////////////////////////////////////////////////////////////////////
+	static FName movement_component_name(TEXT("movement"));
+	m_p_movement_component = CreateDefaultSubobject<U_unit_movement_component>(movement_component_name);
+	m_p_movement_component->SetUpdatedComponent(RootComponent);
+
+	//////////////////////////////////////////////////////////////////////////
+	m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
 }
 
 // Called when the game starts or when spawned
@@ -64,43 +74,145 @@ void A_base_unit::BeginPlay()
 void A_base_unit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (m_p_anim_instance != nullptr)
+	{
+		m_p_anim_instance->_tick(DeltaTime);
+		if (m_p_movement_component) {
+			m_p_anim_instance->set_velocity(m_p_movement_component->Velocity);
+		}
+	}
 }
 
 void A_base_unit::_initialize(uint32 _uiUniqIndex)
 {
 	m_ui_uniq_index = _uiUniqIndex;
 
-	//////////////////////////////////////////////////////////////////////////
-	//tempcode
-	CharacterSKIndex = FMath::RandRange(0, _Assets.Num() - 1);
-	gGameCore->load_resource(USkeletalMesh::StaticClass(),
-		eResourceLoadType,
-		_Assets[CharacterSKIndex],
-		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::LoadComplite),
-		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::LoadFail));
-	///////////////////////////////////////////////////////////////////////////
+	m_p_root_scene_componenet->Activate();
+	m_p_capsule_componenet->Activate();
+	m_p_root_mesh_componenet->Activate();
+	m_p_movement_component->Activate();
+
+	if (m_p_anim_instance) {
+		m_p_anim_instance->_initialize();
+	}
+
+	GC_CHECK(m_map_child_mesh.Num() == 0)
+	m_map_child_mesh.Empty();
 }
 
 void A_base_unit::_reset()
 {
 	m_ui_uniq_index = GC_INDEX_NONE;
+
+	for (auto iter : m_map_child_mesh)
+	{
+		if (m_p_root_mesh_componenet != iter.Value)	
+		{
+			GC_DeleteObject(iter.Value);
+		}
+	}
+	m_map_child_mesh.Empty();
+
+	m_p_root_scene_componenet->Deactivate();
+	m_p_capsule_componenet->Deactivate();
+	m_p_root_mesh_componenet->Deactivate();
+	m_p_movement_component->Deactivate();
+
+	if (m_p_anim_instance) {
+		m_p_anim_instance->_reset();
+	}
+
+	m_p_anim_instance = nullptr;
 }
 
-void A_base_unit::LoadComplite(const FStringAssetReference& _AssetRef, UClass* _p_class)
+//--------------------------------------------------------------------------------------------------------------------------------
+void A_base_unit::set_anim_instance(const FString& _str_path)
 {
-/*	if (gGameCore->is_pooled_actor(this))
-	{
+	gGameCore->load_resource(UClass::StaticClass(), e_rsource_loading_type::async, _str_path,
+		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_anim_instance),
+		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_anim_instance));
+}
 
-	}*/
+void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
+{
+	TAssetPtr<UClass> ptr_instance(_AssetRef);
+	if (ptr_instance) {
+		m_p_root_mesh_componenet->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		m_p_root_mesh_componenet->SetAnimInstanceClass(ptr_instance.Get());
+		m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
+	} else {
+		GC_WARNING(TEXT("[A_base_unit::load_complite_anim_instance] %s"), *_AssetRef.GetAssetPathString());
+	}
 
-	TAssetPtr<USkeletalMesh> NewCharacter(_AssetRef);
-	if (NewCharacter)
+	reset_master_pos_componenet();
+}
+
+void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
+{
+	GC_WARNING(TEXT("[A_base_unit::load_fail_anim_instance] %s"), *_AssetRef.GetAssetPathString());
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------
+
+void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path)
+{
+	gGameCore->load_resource(USkeletalMesh::StaticClass(), e_rsource_loading_type::async, _str_path,
+		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_mesh),
+		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh),
+		_ui_index);
+}
+
+void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
+{
+	TAssetPtr<USkeletalMesh> ptr_instance(_AssetRef);
+	if (ptr_instance)
 	{
-		Mesh->SetSkeletalMesh(NewCharacter.Get());
+		USkeletalMeshComponent* p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_i_custom_index));
+		if (p_child_mesh == nullptr)
+		{
+			if (m_map_child_mesh.Num() == 0) {
+				p_child_mesh = m_p_root_mesh_componenet;
+			}
+			else {
+				p_child_mesh = GC_NewObject<USkeletalMeshComponent>(this);
+			}
+			m_map_child_mesh.Add(_i_custom_index, p_child_mesh);
+		}
+
+		if (p_child_mesh != m_p_root_mesh_componenet)
+		{
+			p_child_mesh->SetupAttachment(m_p_root_mesh_componenet);
+			p_child_mesh->SetMasterPoseComponent(m_p_root_mesh_componenet);
+			p_child_mesh->UpdateMasterBoneMap();
+			p_child_mesh->RegisterComponent();
+		}
+		
+		p_child_mesh->SetSkeletalMesh(ptr_instance.Get());
+	}
+	else {
+		GC_WARNING(TEXT("[A_base_unit::load_complite_mesh] %s"), *_AssetRef.GetAssetPathString());
 	}
 }
 
-void A_base_unit::LoadFail(const FStringAssetReference& _AssetRef, UClass* _p_class)
+void A_base_unit::load_fail_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
 {
-
+	GC_WARNING(TEXT("[A_base_unit::load_fail_mesh] %s"), *_AssetRef.GetAssetPathString());
 }
+
+void A_base_unit::reset_master_pos_componenet()
+{
+	for (auto iter : m_map_child_mesh)
+	{
+		if (m_p_root_mesh_componenet != iter.Value)
+		{
+			iter.Value->SetupAttachment(m_p_root_mesh_componenet);
+			iter.Value->SetMasterPoseComponent(m_p_root_mesh_componenet);
+		}
+
+		iter.Value->UpdateMasterBoneMap();
+		iter.Value->RegisterComponent();
+	}
+}
+
+
+//--------------------------------------------------------------------------------------------------------------------------------

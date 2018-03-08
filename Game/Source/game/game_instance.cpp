@@ -2,6 +2,7 @@
 #include "game_instance.h"
 #include "gamecore_include.h"
 
+#include "unit_actor/player_unit.h"
 #include "GameFramework/PlayerController.h"
 
 void Ugame_instance::Init()
@@ -56,9 +57,14 @@ bool Ugame_instance::tick(float _f_delta_seconds)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// test code
+
+	//
+
+	// controller attach
 	if (m_ui_self_unit != GC_INDEX_NONE)
 	{
-		FVector v_camera_base_position = FVector(-500, 0.0f, 0.0f);
+		r_camera_rotation.Pitch = -25;
+		FVector v_camera_base_position = FVector(-200, 0.0f, 0.0f);
 		FVector v_camera_relative_location = FRotationMatrix(FRotator(r_camera_rotation)).TransformPosition(v_camera_base_position);
 		r_camera_rotation.Normalize();
 
@@ -67,7 +73,6 @@ bool Ugame_instance::tick(float _f_delta_seconds)
 		if (p_unit && p_controll_pawn)
 		{
 			v_camera_relative_location += p_unit->GetActorLocation();
-
 			p_controll_pawn->SetActorLocation(v_camera_relative_location);
 			p_controll_pawn->SetActorRotation(r_camera_rotation);
 
@@ -98,9 +103,11 @@ void Ugame_instance::input_event_move(float _f_axis)
 			v_input_axis = v_input_axis.RotateAngleAxis(pPlayerCameraManager->GetCameraRotation().Yaw, FVector(0, 0, 1));
 
 			if (v_input_axis.IsNearlyZero() == false) {
-
-				FVector v_location = p_controll_unit->GetActorLocation() + v_input_axis * gGameCore->get_world_delta_time() * 100.0f;
-				p_controll_unit->SetActorLocation(v_location);
+			
+				p_controll_unit->AddMovementInput(v_input_axis);
+				//p_controll_unit->AddMovementInput(v_input_axis * 100.0f);
+				//FVector v_location = p_controll_unit->GetActorLocation() + v_input_axis * gGameCore->get_world_delta_time() * 400.0f;
+			//	p_controll_unit->SetActorLocation(p_controll_pawn);
 			}
 		}
 	}
@@ -108,26 +115,37 @@ void Ugame_instance::input_event_move(float _f_axis)
 
 void Ugame_instance::input_event_touch(float _f_axis)
 {
-	if (_f_axis >= 0.001f)
+	if (_f_axis >= 0.01f)
 	{
 		if (m_ui_self_unit == 0)
 		{
 			F_spawn_unit_desc desc;
 			desc._e_load_type = e_rsource_loading_type::instantly;
-			m_ui_self_unit = gGameCore->spawn_unit<A_base_unit>(desc);
+			m_ui_self_unit = gGameCore->spawn_unit<A_player_unit>(desc);
 			gGameCore->set_controll_unit(m_ui_self_unit);
-		}
 
+			A_player_unit* p_unit = gGameCore->get_unit<A_player_unit>(m_ui_self_unit);
+
+			p_unit->change_mesh(0, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_body_0014.hero_meliodas_body_0014'"));
+			p_unit->change_mesh(1, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_head_0000.hero_meliodas_head_0000'"));
+			p_unit->set_anim_instance(TEXT("AnimBlueprint'/Game/Meliodas/anim_bp_meliodas.anim_bp_meliodas_C'"));
+		}
+	}
+
+	static bool a = true;
+	if (a == false)
+	{
 		uint32 iIndex = 0;
 		F_spawn_unit_desc desc;
 		desc._e_load_type = e_rsource_loading_type::async;
-		for (uint32 ui = 0; ui < 10; ++ui)
+		for (uint32 ui = 0; ui < 100; ++ui)
 		{
 			desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
 			desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
-			iIndex = gGameCore->spawn_unit<A_base_unit>(desc);
+			iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
 			loaded_unit_list.Add(iIndex);
 		}
+		a = true;
 	}
 }
 

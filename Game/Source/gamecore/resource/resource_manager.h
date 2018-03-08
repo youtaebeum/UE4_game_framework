@@ -24,7 +24,7 @@ public:
 	virtual void _tick(float _f_delta_seconds);
 
 private:
-	int32					   m_i_resource_load_capacity = 10;	
+	int32					   m_i_resource_load_capacity = 100;	
 	TArray<F_resource_loader*> m_load_list;
 	TMap<UClass*, TArray<F_resource_loader*>*> m_map_wait_list;
 	
@@ -35,6 +35,6 @@ public:
 		e_rsource_loading_type _e_type,
 		const FString& _str_path, 
 		delegate_resource_load_complete _delegate_load_complete,
-		delegate_resource_load_fail _delegate_load_fail);
-
+		delegate_resource_load_fail _delegate_load_fail, 
+		int32 _i_custom_index = -1);
 };
