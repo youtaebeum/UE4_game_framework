@@ -34,12 +34,12 @@ void A_player_prediction_unit::_initialize(uint32 _uiUniqIndex)
 {
 	Super::_initialize(_uiUniqIndex);
 
-	change_mesh((int32)E_unit_parts_type::hair, "SkeletalMesh'/Game/pridiction/character/female/mesh/hair.hair'");
-	change_mesh((int32)E_unit_parts_type::head, "SkeletalMesh'/Game/pridiction/character/female/mesh/head.head'");
-	change_mesh((int32)E_unit_parts_type::upper, "SkeletalMesh'/Game/pridiction/character/female/mesh/upper.upper'");
-	change_mesh((int32)E_unit_parts_type::lower, "SkeletalMesh'/Game/pridiction/character/female/mesh/lower.lower'");
-	change_mesh((int32)E_unit_parts_type::glove, "SkeletalMesh'/Game/pridiction/character/female/mesh/glove.glove'");
-	change_mesh((int32)E_unit_parts_type::shoes, "SkeletalMesh'/Game/pridiction/character/female/mesh/shoes.shoes'");
+	change_mesh((int32)E_unit_parts_type::hair, "SkeletalMesh'/Game/pridiction/character/female/mesh/hair.hair'", E_resource_load_property::mesh_group_0);
+	change_mesh((int32)E_unit_parts_type::head, "SkeletalMesh'/Game/pridiction/character/female/mesh/head.head'", E_resource_load_property::mesh_group_0);
+	change_mesh((int32)E_unit_parts_type::upper, "SkeletalMesh'/Game/pridiction/character/female/mesh/upper.upper'", E_resource_load_property::mesh_group_0);
+	change_mesh((int32)E_unit_parts_type::lower, "SkeletalMesh'/Game/pridiction/character/female/mesh/lower.lower'", E_resource_load_property::mesh_group_0);
+	change_mesh((int32)E_unit_parts_type::glove, "SkeletalMesh'/Game/pridiction/character/female/mesh/glove.glove'", E_resource_load_property::mesh_group_0);
+	change_mesh((int32)E_unit_parts_type::shoes, "SkeletalMesh'/Game/pridiction/character/female/mesh/shoes.shoes'", E_resource_load_property::mesh_group_0);
 
 	set_anim_instance("AnimBlueprint'/Game/pridiction/character/female/animation/female_anim_bp.female_anim_bp_C'");
 }

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "gamecore_minimal.h"
+#include "game_minimal.h"
 
 UENUM(BlueprintType)
 enum class E_unit_parts_type : uint8

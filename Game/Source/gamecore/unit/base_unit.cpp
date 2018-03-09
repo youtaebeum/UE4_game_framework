@@ -128,7 +128,14 @@ void A_base_unit::_reset()
 //--------------------------------------------------------------------------------------------------------------------------------
 void A_base_unit::set_anim_instance(const FString& _str_path)
 {
-	gGameCore->load_resource(UClass::StaticClass(), e_rsource_loading_type::async, _str_path,
+	F_load_resource_desc load_desc;
+
+	load_desc._p_class = UClass::StaticClass();
+	load_desc._e_loading_type = e_rsource_loading_type::async;
+	load_desc._str_path = _str_path;
+	load_desc._e_property = E_resource_load_property::animinstance;
+
+	gGameCore->load_resource(load_desc, 
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_anim_instance),
 		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_anim_instance));
 }
@@ -153,26 +160,20 @@ void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
-/*
-void A_base_unit::regist_cdo_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet)
+
+void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, E_resource_load_property _e_property)
 {
-	GC_CHECK(m_p_root_mesh_componenet != nullptr)
-	GC_CHECK(_p_mesh_componenet!=nullptr)
-	GC_CHECK(m_p_root_mesh_componenet != _p_mesh_componenet)
+	F_load_resource_desc load_desc;
 
-	_p_mesh_componenet->SetupAttachment(m_p_root_mesh_componenet);
-	_p_mesh_componenet->SetMasterPoseComponent(m_p_root_mesh_componenet);
-	_p_mesh_componenet->RegisterComponent();
+	load_desc._p_class = USkeletalMesh::StaticClass();
+	load_desc._e_loading_type = e_rsource_loading_type::async;
+	load_desc._str_path = _str_path;
+	load_desc._e_property = _e_property;
+	load_desc._i_custom_index = _ui_index;
 
-	m_map_child_mesh.Add(_ui_index, _p_mesh_componenet);
-}*/
-
-void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path)
-{
-	gGameCore->load_resource(USkeletalMesh::StaticClass(), e_rsource_loading_type::async, _str_path,
+	gGameCore->load_resource(load_desc,
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_mesh),
-		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh),
-		_ui_index);
+		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh));
 }
 
 void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)

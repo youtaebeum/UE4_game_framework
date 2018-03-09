@@ -23,6 +23,20 @@ enum e_resource_load_state
 	fail
 };
 
+UENUM()
+enum E_resource_load_property 
+{
+	front = -128,		
+
+	animinstance, 		
+
+	mesh_group_0,		
+	mesh_group_1,		
+	mesh_group_2,		
+
+	back = 127
+};
+
 ////////////////////////////////////////////////////////////////////////////
 USTRUCT(noexport)
 struct F_spawn_unit_desc
@@ -44,6 +58,22 @@ public:
 		return Desc;
 	}
 };
+	
 ////////////////////////////////////////////////////////////////////////////
+USTRUCT(noexport)
+struct F_load_resource_desc
+{
+public:
+	UClass*					 _p_class = nullptr;
+	FString					 _str_path = "";
+	e_rsource_loading_type   _e_loading_type = e_rsource_loading_type::instantly;
+	E_resource_load_property _e_property = E_resource_load_property::back;
+	int32					 _i_custom_index = 0;
 
+	static struct F_spawn_unit_desc & get()
+	{
+		static F_spawn_unit_desc Desc;
+		return Desc;
+	}
+};
 

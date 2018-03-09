@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "gamecore_minimal.h"
+#include "game_minimal.h"
 
 #include "Engine/GameInstance.h"
 #include "Ticker.h"
@@ -26,6 +26,8 @@ private:
 
 	TArray<int32> loaded_unit_list;
 	FRotator r_camera_rotation = FRotator::ZeroRotator;
+
+	TArray<FString> _Assets;
 
 	UFUNCTION() void input_event_move(float _f_axis);
 	UFUNCTION() void input_event_touch(float _f_axis);

@@ -68,33 +68,24 @@ void U_resource_manager::_tick(float _f_delta_seconds)
 	}
 }
 
-void U_resource_manager::load_resource(
-	UClass* _p_class, 
-	e_rsource_loading_type _e_type,
-	const FString& _str_path, 
-	delegate_resource_load_complete _delegate_load_complete,
-	delegate_resource_load_fail _delegate_load_fail,
-	int32 _i_custom_index)
+void U_resource_manager::load_resource(const F_load_resource_desc& _desc,
+	delegate_resource_load_complete _delegate_load_complete, 
+	delegate_resource_load_fail _delegate_load_fail)
 {
-	TArray<F_resource_loader*>* pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_p_class));
+	int32 _i_property = (int32)_desc._e_property;
+	TArray<F_resource_loader*>* pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
 	if (pLoadList == nullptr)
 	{
-		pLoadList = GC_New(TArray<F_resource_loader*>);
-		F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
-
-		pLoader->clear();
-		pLoader->set_load_info(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail, _i_custom_index);
-
-		pLoadList->Add(pLoader);
-		m_map_wait_list.Add(_p_class, pLoadList);
+		m_map_wait_list.Add(_i_property, GC_New(TArray<F_resource_loader*>));
+		m_map_wait_list.KeySort([](int32 A, int32 B) {
+			return A > B;
+		});
 	}
-	else
-	{
-		F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
 
-		pLoader->clear();
-		pLoader->set_load_info(_p_class, _e_type, _str_path, _delegate_load_complete, _delegate_load_fail, _i_custom_index);
+	pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
 
-		pLoadList->Add(pLoader);
-	}
+	F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
+	pLoader->clear();
+	pLoader->set_load_info(_desc, _delegate_load_complete, _delegate_load_fail);
+	pLoadList->Add(pLoader);
 }

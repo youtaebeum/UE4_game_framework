@@ -12,23 +12,23 @@ F_resource_loader::~F_resource_loader()
 	clear();
 }
 
-void F_resource_loader::set_load_info(UClass* _p_class, e_rsource_loading_type _e_type, const FString& _str_path, 
-	delegate_resource_load_complete _delegate_load_complete, 
-	delegate_resource_load_fail _delegate_load_fail,
-	int32 _i_custom_index)
+void F_resource_loader::set_load_info(const F_load_resource_desc& _desc,
+	delegate_resource_load_complete _delegate_load_complete,
+	delegate_resource_load_fail _delegate_load_fail)
 {
 	GC_CHECK(m_e_load_state == e_resource_load_state::none)
-	GC_CHECK(_str_path.IsEmpty() == false)
-	GC_CHECK(_p_class != nullptr)
+	GC_CHECK(_desc._str_path.IsEmpty() == false)
+	GC_CHECK(_desc._p_class != nullptr)
 
 	m_e_load_state = e_resource_load_state::ready;
-	m_p_class = _p_class;
-	m_e_loading_type = _e_type;
-	m_str_asset_path = _str_path;
-	m_asset_ref = _str_path;
-	m_delegate_load_complte = _delegate_load_complete;
+	m_p_class = _desc._p_class;
+	m_e_loading_type = _desc._e_loading_type;
+	m_str_asset_path = _desc._str_path;
+	m_asset_ref = _desc._str_path;
+	m_delegate_load_complete = _delegate_load_complete;
 	m_delegate_load_fail = _delegate_load_fail;
-	m_i_custom_index = _i_custom_index;
+	m_e_property = _desc._e_property;
+	m_i_custom_index = _desc._i_custom_index;
 }
 
 void F_resource_loader::clear()
@@ -41,7 +41,7 @@ void F_resource_loader::clear()
 	m_e_loading_type = e_rsource_loading_type::instantly;
 	m_str_asset_path.Empty();
 	m_asset_ref.Reset();
-	m_delegate_load_complte.Unbind();
+	m_delegate_load_complete.Unbind();
 	m_delegate_load_fail.Unbind();
 	m_i_custom_index = -1;
 }
@@ -64,7 +64,7 @@ void F_resource_loader::load_start()
 		else
 		{
 			GC_LOG(TEXT("[F_resource_loader::LoadInstantly] LoadComplete(%s)"), *m_str_asset_path);
-			m_delegate_load_complte.Execute(m_asset_ref, m_p_class, m_i_custom_index);
+			m_delegate_load_complete.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 			m_e_load_state = e_resource_load_state::complete;
 		}
 	}break;
@@ -86,7 +86,7 @@ void F_resource_loader::load_start()
 void F_resource_loader::load_deferred()
 {
 	GC_LOG(TEXT("[F_resource_loader::load_deferred] LoadComplete(%s)"), *m_str_asset_path);
-	m_delegate_load_complte.Execute(m_asset_ref, m_p_class, m_i_custom_index);
+	m_delegate_load_complete.Execute(m_asset_ref, m_p_class, m_i_custom_index);
 	m_e_load_state = e_resource_load_state::complete;
 };
 

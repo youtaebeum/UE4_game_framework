@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "gamecore_minimal.h"
+#include "game_minimal.h"
 #include "unit/base_unit.h"
 #include "unit_actor/game_unit_define.h"
 #include "player_prediction_unit.generated.h"

@@ -9,8 +9,8 @@
 //------------------------------------------------------------------------------------------------------
 // 앞으로 해야할 것 들
 // 1. Actor의 경우 거리 소팅 기능 
-// 2. 비동기, 동기 그룹 나누기
-// 3. 우선순위 property 작업
+// 2. 비동기, 동기 그룹 나누기  
+// 3. 우선순위 property 작업   <- 완료
 //------------------------------------------------------------------------------------------------------
 
 UCLASS()
@@ -24,17 +24,11 @@ public:
 	virtual void _tick(float _f_delta_seconds);
 
 private:
-	int32					   m_i_resource_load_capacity = 100;	
-	TArray<F_resource_loader*> m_load_list;
-	TMap<UClass*, TArray<F_resource_loader*>*> m_map_wait_list;
+	int32									 m_i_resource_load_capacity = 100;	
+	TArray<F_resource_loader*>				 m_load_list;
+	TMap<int32, TArray<F_resource_loader*>*> m_map_wait_list;
 	
 public:
 	void set_resource_load_capacity(int32 _iLoadListSize) { m_i_resource_load_capacity = _iLoadListSize; }
-
-	void load_resource(UClass* _p_class, 
-		e_rsource_loading_type _e_type,
-		const FString& _str_path, 
-		delegate_resource_load_complete _delegate_load_complete,
-		delegate_resource_load_fail _delegate_load_fail, 
-		int32 _i_custom_index = -1);
+	void load_resource(const F_load_resource_desc& _desc, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail);
 };
