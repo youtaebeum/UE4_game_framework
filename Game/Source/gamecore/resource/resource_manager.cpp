@@ -11,6 +11,7 @@ void U_resource_manager::_initialize()
 void U_resource_manager::_reset()
 {
 	for (int i = 0; i < m_load_list.Num(); ++i)	{
+		m_load_list[i]->clear();
 		gGameCore->return_object<F_resource_loader>(m_load_list[i]);
 	}
 	m_load_list.Empty();
@@ -20,6 +21,7 @@ void U_resource_manager::_reset()
 		TArray<F_resource_loader*>* pLoader = Elem.Value;
 		for (int i = 0; i < pLoader->Num(); ++i)
 		{
+			(*pLoader)[i]->clear();
 			gGameCore->return_object<F_resource_loader>((*pLoader)[i]);
 		}
 		Elem.Value->Empty();

@@ -33,9 +33,6 @@ void F_resource_loader::set_load_info(const F_load_resource_desc& _desc,
 
 void F_resource_loader::clear()
 {
-	auto& assetLoader = UAssetManager::GetStreamableManager();
-	assetLoader.Unload(m_asset_ref);
-
 	m_e_load_state = e_resource_load_state::none;
 	m_p_class = nullptr;
 	m_e_loading_type = e_rsource_loading_type::instantly;
@@ -85,9 +82,12 @@ void F_resource_loader::load_start()
 
 void F_resource_loader::load_deferred()
 {
-	GC_LOG(TEXT("[F_resource_loader::load_deferred] LoadComplete(%s)"), *m_str_asset_path);
-	m_delegate_load_complete.Execute(m_asset_ref, m_p_class, m_i_custom_index);
-	m_e_load_state = e_resource_load_state::complete;
+	if (m_p_class)
+	{
+		GC_LOG(TEXT("[F_resource_loader::load_deferred] LoadComplete(%s)"), *m_str_asset_path);
+		m_delegate_load_complete.Execute(m_asset_ref, m_p_class, m_i_custom_index);
+		m_e_load_state = e_resource_load_state::complete;
+	}
 };
 
 e_resource_load_state F_resource_loader::get_load_state()
