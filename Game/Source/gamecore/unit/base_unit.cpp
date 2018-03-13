@@ -175,10 +175,11 @@ void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, int32 _
 	load_desc._str_path = _str_path;
 	load_desc._i_property = _i_property;
 	load_desc._i_custom_index = _ui_index;
+	load_desc._v_loaded_location = GetActorLocation();
 
 	gGameCore->load_resource(load_desc,
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_mesh),
-		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh));
+		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh), true);
 }
 
 void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)

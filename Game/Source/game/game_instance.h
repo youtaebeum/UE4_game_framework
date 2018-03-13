@@ -23,6 +23,7 @@ private:
 /////////////////////////////////////////////////////////
 // TestCode
 	uint32 m_ui_self_unit = 0;
+	bool m_b_create_test_actor = false;
 
 	TArray<int32> loaded_unit_list;
 	FRotator r_camera_rotation = FRotator::ZeroRotator;

@@ -76,9 +76,10 @@ float U_gamecore_manager::get_world_delta_time()
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void U_gamecore_manager::load_resource(const F_load_resource_desc& _desc, 
 	delegate_resource_load_complete _delegate_load_complete, 
-	delegate_resource_load_fail _delegate_load_fail)
+	delegate_resource_load_fail _delegate_load_fail,
+	bool _b_sort)
 {
-	U_resource_manager::_get_instance()->load_resource(_desc, _delegate_load_complete, _delegate_load_fail);
+	U_resource_manager::_get_instance()->load_resource(_desc, _delegate_load_complete, _delegate_load_fail, _b_sort);
 }
 
 void  U_gamecore_manager::despawn_unit(uint32 _i_uniq_index) 
@@ -161,3 +162,16 @@ void	U_gamecore_manager::enable_controller_input(bool _b_enable)
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FVector U_gamecore_manager::get_camera_location()
+{
+	APlayerController* p_controller = nullptr;
+	if (get_game_instance())
+	{
+		p_controller = get_game_instance()->GetFirstLocalPlayerController();
+	}
+
+	GC_CHECK(p_controller != nullptr);
+
+	return p_controller->PlayerCameraManager->GetCameraLocation();
+}

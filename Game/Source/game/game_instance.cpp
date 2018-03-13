@@ -48,7 +48,9 @@ void Ugame_instance::Init()
 	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Standard.SK_CharM_Standard'");
 	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Tusk.SK_CharM_Tusk'");
 	_Assets.Add("SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Warrior.SK_CharM_Warrior'");
+	m_b_create_test_actor = true;
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 }
 
 void Ugame_instance::Shutdown()
@@ -158,8 +160,7 @@ void Ugame_instance::input_event_touch(float _f_axis)
 		}
 	}
 
-	static bool a = true;
-	if (a == true)
+	if (m_b_create_test_actor == true)
 	{
 		uint32 iIndex = 0;
 		F_spawn_unit_desc desc;
@@ -186,7 +187,7 @@ void Ugame_instance::input_event_touch(float _f_axis)
 			p_unit->change_mesh(0, _Assets[FMath::RandRange(0, _Assets.Num() - 1)]);
 			loaded_unit_list.Add(iIndex);
 		}
-		a = false;
+		m_b_create_test_actor = false;
 	}
 }
 

@@ -48,7 +48,8 @@ public:
 // Resource Manager
 	void load_resource(const F_load_resource_desc& _desc,
 		delegate_resource_load_complete _delegate_load_complete, 
-		delegate_resource_load_fail _delegate_load_fail);
+		delegate_resource_load_fail _delegate_load_fail,
+		bool _b_sort = false);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Scene Manager
@@ -76,6 +77,10 @@ public:
 
 	void	set_virtual_joystick_visiblity(bool _b_visible);
 	void	enable_controller_input(bool _b_enable);
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// camera
+	FVector get_camera_location();
 };
 
 extern GAMECORE_API class U_gamecore_manager*	gGameCore;

@@ -69,11 +69,22 @@ public:
 	e_rsource_loading_type   _e_loading_type = e_rsource_loading_type::instantly;
 	int32					 _i_property = 0;
 	int32					 _i_custom_index = 0;
+	FVector					 _v_loaded_location = FVector::ZeroVector;
 
 	static struct F_spawn_unit_desc & get()
 	{
 		static F_spawn_unit_desc Desc;
 		return Desc;
+	}
+
+	void clear()
+	{
+		_p_class = nullptr;
+		_str_path = "";
+		_e_loading_type = e_rsource_loading_type::instantly;
+		_i_property = 0;
+		_i_custom_index = 0;
+		_v_loaded_location = FVector::ZeroVector;
 	}
 };
 
