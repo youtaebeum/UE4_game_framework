@@ -74,11 +74,17 @@ void A_base_unit::BeginPlay()
 void A_base_unit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (m_p_anim_instance != nullptr)
-	{
-		m_p_anim_instance->_tick(DeltaTime);
-		if (m_p_movement_component) {
-			m_p_anim_instance->set_velocity(m_p_movement_component->Velocity);
+
+	if (m_p_root_mesh_componenet) {
+		if (m_p_anim_instance != m_p_root_mesh_componenet->GetAnimInstance()) {
+			m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
+		}
+
+		if (m_p_anim_instance) {
+			m_p_anim_instance->_tick(DeltaTime);
+			if (m_p_movement_component) {
+				m_p_anim_instance->set_velocity(m_p_movement_component->Velocity);
+			}
 		}
 	}
 }
@@ -133,7 +139,7 @@ void A_base_unit::set_anim_instance(const FString& _str_path)
 	load_desc._p_class = UClass::StaticClass();
 	load_desc._e_loading_type = e_rsource_loading_type::async;
 	load_desc._str_path = _str_path;
-	load_desc._e_property = E_resource_load_property::animinstance;
+	load_desc._i_property = 100;
 
 	gGameCore->load_resource(load_desc, 
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_anim_instance),
@@ -146,7 +152,6 @@ void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _Asse
 	if (ptr_instance) {
 		m_p_root_mesh_componenet->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 		m_p_root_mesh_componenet->SetAnimInstanceClass(ptr_instance.Get());
-		m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
 	} else {
 		GC_WARNING(TEXT("[A_base_unit::load_complite_anim_instance] %s"), *_AssetRef.GetAssetPathString());
 	}
@@ -161,14 +166,14 @@ void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, E_resource_load_property _e_property)
+void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_property)
 {
 	F_load_resource_desc load_desc;
 
 	load_desc._p_class = USkeletalMesh::StaticClass();
 	load_desc._e_loading_type = e_rsource_loading_type::async;
 	load_desc._str_path = _str_path;
-	load_desc._e_property = _e_property;
+	load_desc._i_property = _i_property;
 	load_desc._i_custom_index = _ui_index;
 
 	gGameCore->load_resource(load_desc,

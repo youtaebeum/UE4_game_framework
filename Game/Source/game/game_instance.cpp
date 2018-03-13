@@ -152,7 +152,7 @@ void Ugame_instance::input_event_touch(float _f_axis)
 			p_unit->set_anim_instance(TEXT("AnimBlueprint'/Game/Meliodas/anim_bp_meliodas.anim_bp_meliodas_C'"));*/
 
 			F_spawn_unit_desc desc;
-			desc._e_load_type = e_rsource_loading_type::instantly;
+			desc._e_load_type = e_rsource_loading_type::async;
 			m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
 			gGameCore->set_controll_unit(m_ui_self_unit);
 		}

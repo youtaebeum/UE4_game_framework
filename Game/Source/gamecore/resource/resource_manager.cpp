@@ -12,17 +12,17 @@ void U_resource_manager::_reset()
 {
 	for (int i = 0; i < m_load_list.Num(); ++i)	{
 		m_load_list[i]->clear();
-		gGameCore->return_object<F_resource_loader>(m_load_list[i]);
+		gGameCore->return_uobject(m_load_list[i]);
 	}
 	m_load_list.Empty();
 
 	for (auto& Elem : m_map_wait_list)
 	{
-		TArray<F_resource_loader*>* pLoader = Elem.Value;
+		TArray<U_resource_loader*>* pLoader = Elem.Value;
 		for (int i = 0; i < pLoader->Num(); ++i)
 		{
 			(*pLoader)[i]->clear();
-			gGameCore->return_object<F_resource_loader>((*pLoader)[i]);
+			gGameCore->return_uobject((*pLoader)[i]);
 		}
 		Elem.Value->Empty();
 		GC_Delete(Elem.Value);
@@ -40,7 +40,8 @@ void U_resource_manager::_tick(float _f_delta_seconds)
 		if (m_e_load_state == e_resource_load_state::complete ||
 			m_e_load_state == e_resource_load_state::fail)
 		{
-			gGameCore->return_object<F_resource_loader>(m_load_list[i]);
+			m_load_list[i]->clear();
+			gGameCore->return_uobject(m_load_list[i]);
 			m_load_list.RemoveAt(i++);
 		}
 	}
@@ -50,7 +51,7 @@ void U_resource_manager::_tick(float _f_delta_seconds)
 	{
 		for (auto Elem : m_map_wait_list)
 		{
-			TArray<F_resource_loader*>* pLoadList = Elem.Value;
+			TArray<U_resource_loader*>* pLoadList = Elem.Value;
 			for (int i = 0; i < pLoadList->Num(); ++i)
 			{
 				(*pLoadList)[i]->load_start();
@@ -74,11 +75,11 @@ void U_resource_manager::load_resource(const F_load_resource_desc& _desc,
 	delegate_resource_load_complete _delegate_load_complete, 
 	delegate_resource_load_fail _delegate_load_fail)
 {
-	int32 _i_property = (int32)_desc._e_property;
-	TArray<F_resource_loader*>* pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
+	int32 _i_property = _desc._i_property;
+	TArray<U_resource_loader*>* pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
 	if (pLoadList == nullptr)
 	{
-		m_map_wait_list.Add(_i_property, GC_New(TArray<F_resource_loader*>));
+		m_map_wait_list.Add(_i_property, GC_New(TArray<U_resource_loader*>));
 		m_map_wait_list.KeySort([](int32 A, int32 B) {
 			return A > B;
 		});
@@ -86,7 +87,7 @@ void U_resource_manager::load_resource(const F_load_resource_desc& _desc,
 
 	pLoadList = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
 
-	F_resource_loader* pLoader = gGameCore->get_object<F_resource_loader>();
+	U_resource_loader* pLoader = gGameCore->get_uobject<U_resource_loader>();
 	pLoader->clear();
 	pLoader->set_load_info(_desc, _delegate_load_complete, _delegate_load_fail);
 	pLoadList->Add(pLoader);

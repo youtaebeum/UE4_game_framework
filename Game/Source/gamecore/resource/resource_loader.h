@@ -5,24 +5,28 @@
 #include "gamecore_minimal.h"
 #include "Engine/AssetManager.h"
 
-REGIIST_OBJECTPOOLTYPE(F_resource_loader, OBJECT_POOL_DEFAULT_SIZE)
+#include "resource_loader.generated.h"
 
-class F_resource_loader
+REGIIST_OBJECTPOOLTYPE(U_resource_loader, OBJECT_POOL_DEFAULT_SIZE)
+
+UCLASS()
+class U_resource_loader : public UObject
 {
-public:
-	F_resource_loader();
-	~F_resource_loader();
+	GENERATED_BODY()
+
+private:
+	UPROPERTY() UClass*					 m_p_class = nullptr;
+	UPROPERTY() int32					 m_i_property = 0;
+	UPROPERTY() FString					 m_str_asset_path;
+	UPROPERTY() int32					 m_i_custom_index = 0;
+
+	e_rsource_loading_type   m_e_loading_type = e_rsource_loading_type::instantly;
 
 private:
 	e_resource_load_state    m_e_load_state = e_resource_load_state::none;
-	UClass*					 m_p_class = nullptr;
-	e_rsource_loading_type   m_e_loading_type = e_rsource_loading_type::instantly;
-	E_resource_load_property m_e_property = E_resource_load_property::back;
 
-	FString				   m_str_asset_path;
-	FStringAssetReference  m_asset_ref;
-
-	int32				   m_i_custom_index = 0;
+	FStringAssetReference			 m_asset_ref;
+	TSharedPtr<FStreamableHandle>	 m_streamable_handle = nullptr;
 
 	delegate_resource_load_complete  m_delegate_load_complete;
 	delegate_resource_load_fail		 m_delegate_load_fail;

@@ -65,7 +65,7 @@ private:
 	// mesh
 public:
 	//void regist_cdo_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet);
-	void change_mesh(int32 _ui_index, const FString& _str_path, E_resource_load_property _e_property = E_resource_load_property::back);
+	void change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_property = 0);
 	
 private:
 	void load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index);

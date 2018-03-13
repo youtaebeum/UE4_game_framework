@@ -125,7 +125,7 @@ public:
 			for (int i = 0; i < _i_capacity_size; ++i)
 			{
 				FT* p_new_object = NewObject<FT>(U_object_pool_manager::_get_instance());
-				p_object->AddToRoot();
+				p_new_object->AddToRoot();
 				m_stack_list.Add(p_new_object);
 				m_i_create_count++;
 			}

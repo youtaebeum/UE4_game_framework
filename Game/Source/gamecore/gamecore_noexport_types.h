@@ -22,7 +22,7 @@ enum e_resource_load_state
 	complete,
 	fail
 };
-
+/*
 UENUM()
 enum E_resource_load_property 
 {
@@ -35,7 +35,7 @@ enum E_resource_load_property
 	mesh_group_2,		
 
 	back = 127
-};
+};*/
 
 ////////////////////////////////////////////////////////////////////////////
 USTRUCT(noexport)
@@ -67,7 +67,7 @@ public:
 	UClass*					 _p_class = nullptr;
 	FString					 _str_path = "";
 	e_rsource_loading_type   _e_loading_type = e_rsource_loading_type::instantly;
-	E_resource_load_property _e_property = E_resource_load_property::back;
+	int32					 _i_property = 0;
 	int32					 _i_custom_index = 0;
 
 	static struct F_spawn_unit_desc & get()
