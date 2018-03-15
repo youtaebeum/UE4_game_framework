@@ -91,6 +91,8 @@ void A_base_unit::Tick(float DeltaTime)
 
 void A_base_unit::_initialize(uint32 _uiUniqIndex)
 {
+	PrimaryActorTick.SetTickFunctionEnable(true);
+
 	m_ui_uniq_index = _uiUniqIndex;
 
 	m_p_root_scene_componenet->Activate();
@@ -108,15 +110,16 @@ void A_base_unit::_initialize(uint32 _uiUniqIndex)
 
 void A_base_unit::_reset()
 {
+	PrimaryActorTick.SetTickFunctionEnable(false);
+
 	m_ui_uniq_index = GC_INDEX_NONE;
 
-	for (auto iter : m_map_child_mesh)
-	{
-		if (m_p_root_mesh_componenet != iter.Value)	
-		{
+	for (auto iter : m_map_child_mesh) {
+		if (m_p_root_mesh_componenet != iter.Value)	{
 			GC_DeleteObject(iter.Value);
 		}
 	}
+
 	m_map_child_mesh.Empty();
 
 	m_p_root_scene_componenet->Deactivate();
