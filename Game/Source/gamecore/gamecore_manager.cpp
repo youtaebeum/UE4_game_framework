@@ -38,11 +38,11 @@ void U_gamecore_manager::_initialize()
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void U_gamecore_manager::_reset()
 {
+	U_scene_manager::_remove_instance();
 	U_input_manager::_remove_instance();
 	U_unit_manager::_remove_instance();
 	U_resource_manager::_remove_instance();
 	U_object_pool_manager::_remove_instance();
-	U_scene_manager::_remove_instance();
 
 	m_p_game_instance = nullptr;
 }
@@ -82,6 +82,17 @@ void U_gamecore_manager::load_resource(const F_load_resource_desc& _desc,
 	U_resource_manager::_get_instance()->load_resource(_desc, _delegate_load_complete, _delegate_load_fail, _b_sort);
 }
 
+void U_gamecore_manager::clear_load_list() {
+	U_resource_manager::_get_instance()->clear_load_list();
+}
+
+FStreamableManager& U_gamecore_manager::get_streamable_manager() 
+{
+	return U_resource_manager::_get_instance()->get_streamable_manager();
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 void  U_gamecore_manager::despawn_unit(uint32 _i_uniq_index) 
 {
 	U_unit_manager::_get_instance()->despawn_unit(_i_uniq_index);
@@ -90,6 +101,23 @@ void  U_gamecore_manager::despawn_unit(uint32 _i_uniq_index)
 class A_base_unit* U_gamecore_manager::get_unit(uint32 _i_uniq_index)
 {
 	return U_unit_manager::_get_instance()->get_unit(_i_uniq_index);
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void U_gamecore_manager::change_scene(uint8 _ui_index) {
+	U_scene_manager::_get_instance()->change_scene(_ui_index);
+}
+
+void U_gamecore_manager::change_scene(const FName& _name) {
+	U_scene_manager::_get_instance()->change_scene(_name);
+}
+
+int8 U_gamecore_manager::get_current_scene_id() {
+	return U_scene_manager::_get_instance()->get_current_scene_id();
+}
+
+FName U_gamecore_manager::get_current_scene_name() {
+	return U_scene_manager::_get_instance()->get_current_scene_name();
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------

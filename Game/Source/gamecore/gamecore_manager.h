@@ -4,8 +4,11 @@
 
 #include "gamecore_minimal.h"
 
+#include "Engine/StreamableManager.h"
+
 #include "pool/object_pool_manager.h"
 #include "unit/unit_manager.h"
+#include "scene/scene_manager.h"
 
 #include "GameCore_Manager.generated.h"
 
@@ -50,9 +53,18 @@ public:
 		delegate_resource_load_complete _delegate_load_complete, 
 		delegate_resource_load_fail _delegate_load_fail,
 		bool _b_sort = false);
+	
+	void clear_load_list();
+	FStreamableManager& get_streamable_manager();
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Scene Manager
+	template<typename T> void regist_scene_state(uint8 _i_index, const FName& _name);
+	void change_scene(uint8 _ui_index);
+	void change_scene(const FName& _name);
+
+	int8 get_current_scene_id();
+	FName get_current_scene_name();
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Unit Manager
@@ -86,6 +98,12 @@ public:
 extern GAMECORE_API class U_gamecore_manager*	gGameCore;
 
 #pragma region templte function
+
+template<typename T> 
+void U_gamecore_manager::regist_scene_state(uint8 _i_index, const FName& _name) {
+	U_scene_manager::_get_instance()->regist_scene_state<T>(_i_index, _name);
+}
+
 template<typename T>
 uint32 U_gamecore_manager::spawn_unit(const F_spawn_unit_desc& _desc) {
 	return U_unit_manager::_get_instance()->spawn_unit<T>(_desc);

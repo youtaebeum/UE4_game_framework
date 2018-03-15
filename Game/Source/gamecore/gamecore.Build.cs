@@ -8,8 +8,7 @@ public class gamecore : ModuleRules
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange( new string[]{"Core", "CoreUObject", "Engine", "InputCore", "AiModule", "AnimGraphRuntime", "GameplayTasks" } );
-
-		PrivateDependencyModuleNames.AddRange( new string[]{} );
+		PublicDependencyModuleNames.AddRange( new string[]{"Core", "CoreUObject", "Engine", "InputCore", "AiModule", "AnimGraphRuntime", "GameplayTasks", "UFSM" } );
+		PrivateDependencyModuleNames.AddRange( new string[]{ } );
 	}
 }

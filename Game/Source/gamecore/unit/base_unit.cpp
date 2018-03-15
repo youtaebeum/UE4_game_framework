@@ -124,6 +124,9 @@ void A_base_unit::_reset()
 	m_p_root_mesh_componenet->Deactivate();
 	m_p_movement_component->Deactivate();
 
+	m_p_root_mesh_componenet->SetAnimInstanceClass(nullptr);
+	m_p_root_mesh_componenet->SetSkeletalMesh(nullptr);
+
 	if (m_p_anim_instance) {
 		m_p_anim_instance->_reset();
 	}
@@ -148,6 +151,8 @@ void A_base_unit::set_anim_instance(const FString& _str_path)
 
 void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
 {
+	if (m_ui_uniq_index == GC_INDEX_NONE) return;
+
 	TAssetPtr<UClass> ptr_instance(_AssetRef);
 	if (ptr_instance) {
 		m_p_root_mesh_componenet->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -155,8 +160,6 @@ void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _Asse
 	} else {
 		GC_WARNING(TEXT("[A_base_unit::load_complite_anim_instance] %s"), *_AssetRef.GetAssetPathString());
 	}
-
-	//reset_master_pos_componenet();
 }
 
 void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
@@ -184,6 +187,8 @@ void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, int32 _
 
 void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
 {
+	if (m_ui_uniq_index == GC_INDEX_NONE) return;
+
 	TAssetPtr<USkeletalMesh> ptr_instance(_AssetRef);
 	if (ptr_instance)
 	{

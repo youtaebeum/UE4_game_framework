@@ -4,45 +4,57 @@
 	"Category": "",
 	"Description": "",
 	"Modules": [
-    {
-      "Name": "Game",
-      "Type": "Runtime",
-      "LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "CoreUObject",
-        "Engine",
-        "GameCore"
-      ]
-    },
-    {
-      "Name": "Game_Editor",
-      "Type": "Editor",
-      "LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "CoreUObject",
-        "Engine",
-        "GameCore",
-        "GameCore_Editor"
-      ]
-    },
-    {
-      "Name": "GameCore",
-      "Type": "Runtime",
-      "LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "CoreUObject",
-        "Engine"
-      ]
-    },
-       {
+		{
+			"Name": "Game",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine",
+				"GameCore"
+			]
+		},
+		{
+			"Name": "Game_Editor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine",
+				"GameCore",
+				"GameCore_Editor"
+			]
+		},
+		{
+			"Name": "GameCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine"
+			]
+		},
+		{
 			"Name": "GameCore_Editor",
 			"Type": "Editor",
 			"LoadingPhase": "Default",
-      "AdditionalDependencies": [
-        "CoreUObject",
-        "Engine",
-        "GameCore"
-      ]
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine",
+				"GameCore"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ObjectPool",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/e3c6aea892b748eb9e2241b9c4b74d36"
+		},
+		{
+			"Name": "UFSM",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/195d90d8cedf4b478a92036c059e2374"
 		}
 	]
 }

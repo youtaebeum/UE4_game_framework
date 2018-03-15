@@ -10,24 +10,11 @@ void U_resource_manager::_initialize()
 
 void U_resource_manager::_reset()
 {
-	for (int i = 0; i < m_load_list.Num(); ++i)	{
-		m_load_list[i].get()->clear();
-		gGameCore->return_uobject(m_load_list[i].get());
-	}
-	m_load_list.Empty();
+	clear_load_list();
 
-	for (auto& Elem : m_map_wait_list)
-	{
-		TArray<F_resource_loader>* pLoader = Elem.Value;
-		for (int i = 0; i < pLoader->Num(); ++i)
-		{
-			(*pLoader)[i].get()->clear();
-			gGameCore->return_uobject((*pLoader)[i].get());
-		}
-		Elem.Value->Empty();
+	for (auto& Elem : m_map_wait_list){
 		GC_Delete(Elem.Value);
 	}
-
 	m_map_wait_list.Empty();
 }
 
@@ -102,5 +89,25 @@ void U_resource_manager::load_resource(const F_load_resource_desc& _desc,
 			float dist_b = FVector::DistSquared(v_camera_location, B.p_loader->get_load_info()._v_loaded_location);
 			return dist_a < dist_b;
 		});
+	}
+}
+
+void U_resource_manager::clear_load_list()
+{
+	for (int i = 0; i < m_load_list.Num(); ++i) {
+		m_load_list[i].get()->clear();
+		gGameCore->return_uobject(m_load_list[i].get());
+	}
+	m_load_list.Empty();
+
+	for (auto& Elem : m_map_wait_list)
+	{
+		TArray<F_resource_loader>* pLoader = Elem.Value;
+		for (int i = 0; i < pLoader->Num(); ++i)
+		{
+			(*pLoader)[i].get()->clear();
+			gGameCore->return_uobject((*pLoader)[i].get());
+		}
+		Elem.Value->Empty();
 	}
 }

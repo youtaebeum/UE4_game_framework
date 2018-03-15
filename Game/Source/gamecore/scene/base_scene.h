@@ -3,52 +3,35 @@
 #pragma once
 
 #include "gamecore_minimal.h"
-
-/*
-#include "GameFramework/Pawn.h"
-#include "base_unit.generated.h"
-
-REGIIST_OBJECTPOOLTYPE(A_base_unit, OBJECT_POOL_DEFAULT_SIZE)
+#include "base_scene.generated.h"
 
 UCLASS()
-class GAMECORE_API A_base_unit : public APawn
+class GAMECORE_API U_base_scene : public UObject
 {
 	GENERATED_BODY()
-	
-public:	
-	A_base_unit(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
-
-protected:
-	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	uint32 m_ui_uniq_index = 0;
-
-	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* Mesh;
 
 public:
-	virtual void _initialize(uint32 _ui_uniq_index);
-	virtual void _reset();
+	void init(uint8 _i_index, const FName& _name);
 
-	//////////////////////////////////////////////////////////////////////////
-	//tempcode
-	int CharacterSKIndex = 0;
-	TArray<FString> _Assets;
-	void Loaded();
+private:
+	UPROPERTY()	int32 m_i_state_index = -1;
+	UPROPERTY()	FName m_state_name;
 
-	e_rsource_loading_type eResourceLoadType;
+public:
+	UFUNCTION() void on_begin_state();
+	UFUNCTION() void on_update_state();
+	UFUNCTION() void on_exit_state();
 
-	void LoadComplite(const FStringAssetReference& _AssetRef, UClass* _p_class);
-	void LoadFail(const FStringAssetReference& _AssetRef, UClass* _p_class);
-	//////////////////////////////////////////////////////////////////////////
+private:
+	virtual void enter() {}
+	virtual void update(float _f_delta_time) {}
+	virtual void exit() {}
 
-	//~ Begin UObject Interface
-	// virtual void PostInitProperties() override;	인스턴스별 디자이너 설정 프로퍼티를 지원하기 위해, 주어진 오브젝트에 대한 인스턴스 데이터에서 값을 로드하기도 합니다
-	// virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override; 에디터에서 프로퍼티 변경시 호출
+	FORCEINLINE uint8 get_state_index()	{
+		return m_i_state_index;
+	}
+
+	FORCEINLINE FName get_state_name() {
+		return m_state_name;
+	}
 };
-*/

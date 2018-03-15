@@ -3,6 +3,9 @@
 #pragma once
 
 #include "gamecore_minimal.h"
+
+#include "Engine/StreamableManager.h"
+
 #include "resource_loader.h"
 #include "resource_manager.generated.h"
 
@@ -33,8 +36,14 @@ private:
 	int32									 m_i_resource_load_capacity = 100;	
 	TArray<F_resource_loader>				 m_load_list;
 	TMap<int32, TArray<F_resource_loader>*>  m_map_wait_list;
+
+	FStreamableManager m_loadder;
 	
 public:
 	void set_resource_load_capacity(int32 _i_capacity) { m_i_resource_load_capacity = _i_capacity; }
 	void load_resource(const F_load_resource_desc& _desc, delegate_resource_load_complete _delegate_load_complete, delegate_resource_load_fail _delegate_load_fail, bool _b_sort = false);
+	void clear_load_list();
+
+public:
+	FStreamableManager& get_streamable_manager() { return _get_instance()->m_loadder; }
 };

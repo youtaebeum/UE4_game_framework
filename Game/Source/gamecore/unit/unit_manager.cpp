@@ -11,8 +11,7 @@ void U_unit_manager::_initialize()
 void U_unit_manager::_reset()
 {
 	m_ui_create_count = 0;
-	for (auto& Elem : m_map_unit) 
-	{
+	for (auto& Elem : m_map_unit) {
 		despawn_unit(Elem.Value);
 	}
 
