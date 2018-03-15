@@ -37,17 +37,14 @@ protected:
 	class UCapsuleComponent* m_p_capsule_componenet = nullptr;
 
 	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class USkeletalMeshComponent* m_p_root_mesh_componenet = nullptr;
+	class USkeletalMeshComponent* m_p_master_mesh_componenet = nullptr;
 
 	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class U_unit_movement_component* m_p_movement_component = nullptr;
 
-	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	class U_unit_anim_instance* m_p_anim_instance = nullptr;
-
 private:
 	TMap<int32, class USkeletalMeshComponent*> m_map_child_mesh;
-
+	
 public:
 	virtual void _initialize(uint32 _ui_uniq_index);
 	virtual void _reset();
@@ -64,8 +61,8 @@ private:
 	//--------------------------------------------------------------------------------------------------------------------------------
 	// mesh
 public:
-	//void regist_cdo_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet);
-	void change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_property = 0);
+	void add_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet, bool _b_attach_master = true);
+	void change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_priority = 0);
 	
 private:
 	void load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index);

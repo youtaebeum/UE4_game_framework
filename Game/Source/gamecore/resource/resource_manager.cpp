@@ -62,17 +62,17 @@ void U_resource_manager::load_resource(const F_load_resource_desc& _desc,
 	delegate_resource_load_complete _delegate_load_complete, 
 	delegate_resource_load_fail _delegate_load_fail, bool _b_sort)
 {
-	int32 _i_property = _desc._i_property;
-	TArray<F_resource_loader>* p_load_list = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
+	int32 _i_priority = _desc._i_priority;
+	TArray<F_resource_loader>* p_load_list = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_priority));
 	if (p_load_list == nullptr)
 	{
-		m_map_wait_list.Add(_i_property, GC_New(TArray<F_resource_loader>));
+		m_map_wait_list.Add(_i_priority, GC_New(TArray<F_resource_loader>));
 		m_map_wait_list.KeySort([](int32 A, int32 B) {
 			return A > B;
 		});
 	}
 
-	p_load_list = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_property));
+	p_load_list = GC_UTILTY::safe_map_value(m_map_wait_list.Find(_i_priority));
 
 	U_resource_loader* p_loader = gGameCore->get_uobject<U_resource_loader>();
 	p_loader->clear();

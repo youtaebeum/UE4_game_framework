@@ -26,6 +26,15 @@ public:
 	virtual void _initialize(uint32 _ui_uniq_index);
 	virtual void _reset();
 
+
+protected:
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_head = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_body = nullptr;
+
+
 	//////////////////////////////////////////////////////////////////////////
 
 	//~ Begin UObject Interface

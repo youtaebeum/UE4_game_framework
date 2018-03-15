@@ -15,7 +15,12 @@ A_player_prediction_unit::A_player_prediction_unit(const FObjectInitializer& Obj
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-
+	add_mesh_componenet((int32)E_unit_parts_type::hair, m_p_mesh_hair = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("hair")));
+	add_mesh_componenet((int32)E_unit_parts_type::head, m_p_mesh_head = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("head")));
+	add_mesh_componenet((int32)E_unit_parts_type::upper, m_p_mesh_upper = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("upper")));
+	add_mesh_componenet((int32)E_unit_parts_type::lower, m_p_mesh_lower = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("lower")));
+	add_mesh_componenet((int32)E_unit_parts_type::glove, m_p_mesh_glove = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("glove")));
+	add_mesh_componenet((int32)E_unit_parts_type::shoes, m_p_mesh_shoes = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("shoes")));
 }
 
 // Called when the game starts or when spawned

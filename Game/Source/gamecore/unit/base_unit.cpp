@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "base_unit.h"
 #include "gamecore_include.h"
@@ -41,29 +41,30 @@ A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
 	m_p_capsule_componenet->SetHiddenInGame(false);
 
 	//////////////////////////////////////////////////////////////////////////
-	static FName mesh_componenet_name(TEXT("unit_mesh"));
-	static FName mesh_collision_profile_name(TEXT("unit_mesh"));
-	m_p_root_mesh_componenet = CreateDefaultSubobject<USkeletalMeshComponent>(mesh_componenet_name);
-	m_p_root_mesh_componenet->AlwaysLoadOnClient = true;
-	m_p_root_mesh_componenet->AlwaysLoadOnServer = true;
-	m_p_root_mesh_componenet->bOwnerNoSee = false;
-	m_p_root_mesh_componenet->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
-	m_p_root_mesh_componenet->bCastDynamicShadow = true;
-	m_p_root_mesh_componenet->bAffectDynamicIndirectLighting = true;
-	m_p_root_mesh_componenet->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-	m_p_root_mesh_componenet->SetupAttachment(RootComponent);
-	m_p_root_mesh_componenet->SetCollisionProfileName(mesh_collision_profile_name);
-	m_p_root_mesh_componenet->bGenerateOverlapEvents = false;
-	m_p_root_mesh_componenet->SetCanEverAffectNavigation(false);
-	m_p_root_mesh_componenet->SetRelativeRotation(FRotator(0, -90.0f, 0));
+	static FName mesh_componenet_name(TEXT("master_mesh"));
+	static FName mesh_collision_profile_name(TEXT("master_mesh"));
+	m_p_master_mesh_componenet = CreateDefaultSubobject<USkeletalMeshComponent>(mesh_componenet_name);
+	m_p_master_mesh_componenet->AlwaysLoadOnClient = true;
+	m_p_master_mesh_componenet->AlwaysLoadOnServer = true;
+	m_p_master_mesh_componenet->bOwnerNoSee = false;
+	m_p_master_mesh_componenet->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+	m_p_master_mesh_componenet->bCastDynamicShadow = true;
+	m_p_master_mesh_componenet->bAffectDynamicIndirectLighting = true;
+	m_p_master_mesh_componenet->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+	m_p_master_mesh_componenet->SetupAttachment(RootComponent);
+	m_p_master_mesh_componenet->SetCollisionProfileName(mesh_collision_profile_name);
+	m_p_master_mesh_componenet->bGenerateOverlapEvents = false;
+	m_p_master_mesh_componenet->SetCanEverAffectNavigation(false);
+	m_p_master_mesh_componenet->SetRelativeRotation(FRotator(0, -90.0f, 0));
+
+	// 확인사항 : AlwaysTickPoseAndRefreshBones <- 일경우 안그려질때의 의미가 단순 visible이 껴져있을때를 말하는건지 확인해야함
+	m_p_master_mesh_componenet->SetVisibility(false);   
 
 	//////////////////////////////////////////////////////////////////////////
 	static FName movement_component_name(TEXT("movement"));
 	m_p_movement_component = CreateDefaultSubobject<U_unit_movement_component>(movement_component_name);
 	m_p_movement_component->SetUpdatedComponent(RootComponent);
 
-	//////////////////////////////////////////////////////////////////////////
-	m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
 }
 
 // Called when the game starts or when spawned
@@ -77,16 +78,11 @@ void A_base_unit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (m_p_root_mesh_componenet) {
-		if (m_p_anim_instance != m_p_root_mesh_componenet->GetAnimInstance()) {
-			m_p_anim_instance = Cast<U_unit_anim_instance>(m_p_root_mesh_componenet->GetAnimInstance());
-		}
-
-		if (m_p_anim_instance) {
-			m_p_anim_instance->_tick(DeltaTime);
-			if (m_p_movement_component) {
-				m_p_anim_instance->set_velocity(m_p_movement_component->Velocity);
-			}
+	for (auto iter : m_map_child_mesh)
+	{
+		U_unit_anim_instance* anim_instance = Cast<U_unit_anim_instance>(iter.Value->GetAnimInstance());
+		if (anim_instance != nullptr) {
+			anim_instance->_tick(DeltaTime);
 		}
 	}
 }
@@ -99,15 +95,18 @@ void A_base_unit::_initialize(uint32 _uiUniqIndex)
 
 	m_p_root_scene_componenet->Activate();
 	m_p_capsule_componenet->Activate();
-	m_p_root_mesh_componenet->Activate();
+	m_p_master_mesh_componenet->Activate();
 	m_p_movement_component->Activate();
 
-	if (m_p_anim_instance) {
-		m_p_anim_instance->_initialize();
-	}
+	for (auto iter : m_map_child_mesh) 
+	{
+		iter.Value->Activate();
 
-	GC_CHECK(m_map_child_mesh.Num() == 0)
-	m_map_child_mesh.Empty();
+		U_unit_anim_instance* anim_instance = Cast<U_unit_anim_instance>(iter.Value->GetAnimInstance());
+		if (anim_instance != nullptr) {
+			anim_instance->_initialize();
+		}
+	}
 }
 
 void A_base_unit::_reset()
@@ -115,28 +114,30 @@ void A_base_unit::_reset()
 	PrimaryActorTick.SetTickFunctionEnable(false);
 
 	m_ui_uniq_index = GC_INDEX_NONE;
-
-	for (auto iter : m_map_child_mesh) {
-		if (m_p_root_mesh_componenet != iter.Value)	{
-			GC_DeleteObject(iter.Value);
-		}
-	}
-
-	m_map_child_mesh.Empty();
-
+	
 	m_p_root_scene_componenet->Deactivate();
 	m_p_capsule_componenet->Deactivate();
-	m_p_root_mesh_componenet->Deactivate();
+	m_p_master_mesh_componenet->Deactivate();
 	m_p_movement_component->Deactivate();
 
-	m_p_root_mesh_componenet->SetAnimInstanceClass(nullptr);
-	m_p_root_mesh_componenet->SetSkeletalMesh(nullptr);
+	m_p_master_mesh_componenet->SetAnimInstanceClass(nullptr);
+	m_p_master_mesh_componenet->SetSkeletalMesh(nullptr);
 
-	if (m_p_anim_instance) {
-		m_p_anim_instance->_reset();
+	for (auto iter : m_map_child_mesh) {
+		iter.Value->Deactivate();
+
+		iter.Value->SetAnimInstanceClass(nullptr);
+		iter.Value->SetSkeletalMesh(nullptr);
+		iter.Value->SetMasterPoseComponent(nullptr);
 	}
 
-	m_p_anim_instance = nullptr;
+	for (auto iter : m_map_child_mesh)
+	{
+		U_unit_anim_instance* anim_instance = Cast<U_unit_anim_instance>(iter.Value->GetAnimInstance());
+		if (anim_instance != nullptr) {
+			anim_instance->_reset();
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -147,7 +148,7 @@ void A_base_unit::set_anim_instance(const FString& _str_path)
 	load_desc._p_class = UClass::StaticClass();
 	load_desc._e_loading_type = e_rsource_loading_type::async;
 	load_desc._str_path = _str_path;
-	load_desc._i_property = 100;
+	load_desc._i_priority = 100;
 
 	gGameCore->load_resource(load_desc, 
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_anim_instance),
@@ -160,9 +161,18 @@ void A_base_unit::load_complite_anim_instance(const FStringAssetReference& _Asse
 
 	TAssetPtr<UClass> ptr_instance(_AssetRef);
 	if (ptr_instance) {
-		m_p_root_mesh_componenet->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		m_p_root_mesh_componenet->SetAnimInstanceClass(ptr_instance.Get());
-	} else {
+		TArray<UActorComponent*> arr_mesh = GetComponentsByClass(USkeletalMeshComponent::StaticClass());
+		for (int i = 0; i < arr_mesh.Num(); ++i)
+		{
+			USkeletalMeshComponent* p_mesh = Cast<USkeletalMeshComponent>(arr_mesh[i]);
+			if (p_mesh->GetAttachParent() != m_p_master_mesh_componenet)
+			{
+				p_mesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+				p_mesh->SetAnimInstanceClass(ptr_instance.Get());
+			}
+		}
+	}
+	else {
 		GC_WARNING(TEXT("[A_base_unit::load_complite_anim_instance] %s"), *_AssetRef.GetAssetPathString());
 	}
 }
@@ -174,20 +184,58 @@ void A_base_unit::load_fail_anim_instance(const FStringAssetReference& _AssetRef
 
 //--------------------------------------------------------------------------------------------------------------------------------
 
-void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_property)
+void A_base_unit::add_mesh_componenet(int32 _ui_index, USkeletalMeshComponent* _p_mesh_componenet, bool _b_attach_master)
 {
+	USkeletalMeshComponent* p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_ui_index));
+	if (p_child_mesh == nullptr) {
+		m_map_child_mesh.Add(_ui_index, _p_mesh_componenet);
+	}
+
+	p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_ui_index));
+
+	p_child_mesh->AlwaysLoadOnClient = true;
+	p_child_mesh->AlwaysLoadOnServer = true;
+	p_child_mesh->bOwnerNoSee = false;
+	p_child_mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
+	p_child_mesh->bCastDynamicShadow = true;
+	p_child_mesh->bAffectDynamicIndirectLighting = true;
+	p_child_mesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+	static FName mesh_collision_profile_name(TEXT("unit_mesh"));
+	p_child_mesh->SetCollisionProfileName(mesh_collision_profile_name);
+	p_child_mesh->bGenerateOverlapEvents = false;
+	p_child_mesh->SetCanEverAffectNavigation(false);
+
+	if (_b_attach_master == true) {
+		p_child_mesh->SetupAttachment(m_p_master_mesh_componenet);
+	}
+	else
+	{
+		p_child_mesh->SetupAttachment(RootComponent);
+		p_child_mesh->SetRelativeRotation(FRotator(0, -90.0f, 0));
+	}
+}
+
+void A_base_unit::change_mesh(int32 _ui_index, const FString& _str_path, int32 _i_priority)
+{
+	USkeletalMeshComponent* p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_ui_index));
+	if (p_child_mesh == nullptr ) {
+		GC_WARNING(TEXT("[A_base_unit::change_mesh] invalid mesh componenet (type:%d ,path:%s"), _ui_index, *_str_path);
+	}
+
 	F_load_resource_desc load_desc;
 
 	load_desc._p_class = USkeletalMesh::StaticClass();
 	load_desc._e_loading_type = e_rsource_loading_type::async;
 	load_desc._str_path = _str_path;
-	load_desc._i_property = _i_property;
+	load_desc._i_priority = _i_priority;
 	load_desc._i_custom_index = _ui_index;
 	load_desc._v_loaded_location = GetActorLocation();
 
 	gGameCore->load_resource(load_desc,
 		delegate_resource_load_complete::CreateUObject(this, &A_base_unit::load_complite_mesh),
 		delegate_resource_load_fail::CreateUObject(this, &A_base_unit::load_fail_mesh), true);
+
+
 }
 
 void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UClass* _p_class, int32 _i_custom_index)
@@ -197,28 +245,21 @@ void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UCl
 	TAssetPtr<USkeletalMesh> ptr_instance(_AssetRef);
 	if (ptr_instance)
 	{
-		//test
 		USkeletalMeshComponent* p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_i_custom_index));
-		if (p_child_mesh == nullptr)
+		if (p_child_mesh) 
 		{
-			if (m_map_child_mesh.Num() == 0) {
-				p_child_mesh = m_p_root_mesh_componenet;
-			}
-			else {
-				p_child_mesh = GC_NewObject<USkeletalMeshComponent>(this);
-			}
-			m_map_child_mesh.Add(_i_custom_index, p_child_mesh);
-		}
-		// end test
+			p_child_mesh->SetSkeletalMesh(ptr_instance.Get());
 
-		if (p_child_mesh != m_p_root_mesh_componenet)
-		{
-			p_child_mesh->SetupAttachment(m_p_root_mesh_componenet);
-			p_child_mesh->SetMasterPoseComponent(m_p_root_mesh_componenet);
-			p_child_mesh->RegisterComponent();
-		}
-		
-		p_child_mesh->SetSkeletalMesh(ptr_instance.Get());
+			// set master pos
+			if (p_child_mesh->GetAttachParent() == m_p_master_mesh_componenet) 
+			{
+				if (m_p_master_mesh_componenet->GetSkeletalMeshResource() == nullptr) {
+					m_p_master_mesh_componenet->SetSkeletalMesh(ptr_instance.Get());
+				}
+				
+				p_child_mesh->SetMasterPoseComponent(m_p_master_mesh_componenet);
+			}
+		}		
 	}
 	else {
 		GC_WARNING(TEXT("[A_base_unit::load_complite_mesh] %s"), *_AssetRef.GetAssetPathString());

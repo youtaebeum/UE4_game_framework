@@ -27,7 +27,25 @@ public:
 	virtual void _initialize(uint32 _ui_uniq_index);
 	virtual void _reset();
 
-private:
+protected:
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_hair = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_head = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_upper = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_lower = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_glove = nullptr;
+
+	UPROPERTY(Category = base_unit, VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* m_p_mesh_shoes = nullptr;
+
 
 	//~ Begin UObject Interface
 	// virtual void PostInitProperties() override;	인스턴스별 디자이너 설정 프로퍼티를 지원하기 위해, 주어진 오브젝트에 대한 인스턴스 데이터에서 값을 로드하기도 합니다

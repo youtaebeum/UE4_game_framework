@@ -58,7 +58,7 @@ void U_resource_loader::load_start()
 	case e_rsource_loading_type::async:
 	{
 		auto& assetLoader = gGameCore->get_streamable_manager();
-		m_streamable_handle = assetLoader.RequestAsyncLoad(m_asset_ref, FStreamableDelegate::CreateUObject(this, &U_resource_loader::load_deferred), m_load_info._i_property);
+		m_streamable_handle = assetLoader.RequestAsyncLoad(m_asset_ref, FStreamableDelegate::CreateUObject(this, &U_resource_loader::load_deferred), m_load_info._i_priority);
 		if (m_streamable_handle.IsValid() == false)
 		{
 			GC_WARNING(TEXT("[F_resource_loader::LoadASync] LoadFail(%s)"), *m_load_info._str_path);

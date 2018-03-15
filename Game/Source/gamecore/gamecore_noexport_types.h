@@ -22,20 +22,6 @@ enum e_resource_load_state
 	complete,
 	fail
 };
-/*
-UENUM()
-enum E_resource_load_property 
-{
-	front = -128,		
-
-	animinstance, 		
-
-	mesh_group_0,		
-	mesh_group_1,		
-	mesh_group_2,		
-
-	back = 127
-};*/
 
 ////////////////////////////////////////////////////////////////////////////
 USTRUCT(noexport)
@@ -67,7 +53,7 @@ public:
 	UClass*					 _p_class = nullptr;
 	FString					 _str_path = "";
 	e_rsource_loading_type   _e_loading_type = e_rsource_loading_type::instantly;
-	int32					 _i_property = 0;
+	int32					 _i_priority = 0;
 	int32					 _i_custom_index = 0;
 	FVector					 _v_loaded_location = FVector::ZeroVector;
 
@@ -82,7 +68,7 @@ public:
 		_p_class = nullptr;
 		_str_path = "";
 		_e_loading_type = e_rsource_loading_type::instantly;
-		_i_property = 0;
+		_i_priority = 0;
 		_i_custom_index = 0;
 		_v_loaded_location = FVector::ZeroVector;
 	}

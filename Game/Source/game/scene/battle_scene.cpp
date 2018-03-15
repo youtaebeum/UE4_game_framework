@@ -43,31 +43,21 @@ void U_battle_scene::enter()
 
 	F_spawn_unit_desc desc;
 	desc._e_load_type = e_rsource_loading_type::async;
-	m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
-	gGameCore->set_controll_unit(m_ui_self_unit);	
+//	m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
 
-	for (int i = 0; i < 500; ++i)
+	int iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
+	A_player_unit* p_unit = gGameCore->get_unit<A_player_unit>(iIndex);
+	gGameCore->set_controll_unit(iIndex);
+	loaded_unit_list.Add(iIndex);
+
+	/*for (int i = 0; i < 500; ++i)
 	{
 		desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
 		desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
-		int iIndex = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
+		iIndex = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
 		loaded_unit_list.Add(iIndex);
-
-		desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
-		desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
-		iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
-		A_player_unit* p_unit = gGameCore->get_unit<A_player_unit>(iIndex);
-		p_unit->change_mesh(0, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_body_0014.hero_meliodas_body_0014'"));
-		p_unit->change_mesh(1, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_head_0000.hero_meliodas_head_0000'"));
-		loaded_unit_list.Add(iIndex);
-
-		desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
-		desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
-		iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
-		p_unit = gGameCore->get_unit<A_player_unit>(iIndex);
-		p_unit->change_mesh(0, _Assets[FMath::RandRange(0, _Assets.Num() - 1)]);
-		loaded_unit_list.Add(iIndex);
-	}
+	}*/
+	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -76,14 +66,14 @@ void U_battle_scene::update(float _f_delta_time)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// test code
 	// controller attach
-	if (m_ui_self_unit != GC_INDEX_NONE)
+	if (gGameCore->get_controll_unit_index() != GC_INDEX_NONE)
 	{
 		r_camera_rotation.Pitch = -25;
 		FVector v_camera_base_position = FVector(-200, 0.0f, 0.0f);
 		FVector v_camera_relative_location = FRotationMatrix(FRotator(r_camera_rotation)).TransformPosition(v_camera_base_position);
 		r_camera_rotation.Normalize();
 
-		A_base_unit* p_unit = gGameCore->get_unit(m_ui_self_unit);
+		A_base_unit* p_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index());
 		A_controller_pawn* p_controll_pawn = gGameCore->get_controller_pawn();
 		if (p_unit && p_controll_pawn)
 		{
@@ -128,7 +118,7 @@ void U_battle_scene::input_event_move(float _f_axis)
 	FVector v_input_axis = gGameCore->get_intput_move_axis();
 	if (v_input_axis.IsNearlyZero() == false)
 	{
-		A_base_unit* p_controll_unit = gGameCore->get_unit(m_ui_self_unit); // <- 이런 코드는 캐싱해서 쓰는게 좋을듯
+		A_base_unit* p_controll_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index()); // <- 이런 코드는 캐싱해서 쓰는게 좋을듯
 		APlayerController* p_player_controller = gGameCore->get_player_controller();
 		if (p_controll_unit && p_player_controller)
 		{
