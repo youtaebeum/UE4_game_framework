@@ -65,11 +65,11 @@ public:
 	{
 #if WITH_EDITOR
 		GC_CHECK(m_given_list.Num() == 0)
+			if (m_given_list.Num() > 0) {
+				GC_ERROR(TEXT("ObjectPool[Object] : Object has not been return(Count : %d)"), m_given_list.Num());
+			}
 #endif
-		if (m_given_list.Num() > 0) {
-			GC_ERROR(TEXT("ObjectPool[Object] : Object has not been return(Count : %d)"), m_given_list.Num());
-		}
-
+		
 		m_i_create_count = 0;
 		m_i_give_count = 0;
 
@@ -164,11 +164,11 @@ public:
 	{
 #if WITH_EDITOR
 		GC_CHECK(m_given_list.Num() == 0)
-#endif
 
 		if (m_given_list.Num() > 0) {
 			GC_ERROR(TEXT("ObjectPool[UObject] : Object has not been return(Count : %d)"), m_given_list.Num());
 		}
+#endif
 
 		m_i_create_count = 0;
 		m_i_give_count = 0;
@@ -284,10 +284,11 @@ public:
 	{
 #if WITH_EDITOR
 		GC_CHECK(m_given_list.Num() == 0)
+			if (m_given_list.Num() > 0) {
+				GC_ERROR(TEXT("ObjectPool[UObject] : Object has not been return(Count : %d)"), m_given_list.Num());
+			}
 #endif
-		if (m_given_list.Num() > 0) {
-			GC_ERROR(TEXT("ObjectPool[UObject] : Object has not been return(Count : %d)"), m_given_list.Num());
-		}
+	
 
 		m_i_create_count = 0;
 		m_i_give_count = 0;

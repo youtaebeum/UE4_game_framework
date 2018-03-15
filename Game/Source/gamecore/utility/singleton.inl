@@ -58,6 +58,7 @@ void F_singleton<TClass>::_DepawnMangerActor()
 	if (pManagerActor) {
 		GC_UTILTY::DespawnActor(pManagerActor);
 	}
+	pManagerActor = nullptr;
 #endif
 }
 

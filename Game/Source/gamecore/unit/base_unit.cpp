@@ -38,6 +38,8 @@ A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
 	m_p_capsule_componenet->SetupAttachment(RootComponent);
 	m_p_capsule_componenet->bDynamicObstacle = true;
 
+	m_p_capsule_componenet->SetHiddenInGame(false);
+
 	//////////////////////////////////////////////////////////////////////////
 	static FName mesh_componenet_name(TEXT("unit_mesh"));
 	static FName mesh_collision_profile_name(TEXT("unit_mesh"));
