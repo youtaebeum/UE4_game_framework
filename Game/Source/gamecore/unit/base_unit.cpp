@@ -197,6 +197,7 @@ void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UCl
 	TAssetPtr<USkeletalMesh> ptr_instance(_AssetRef);
 	if (ptr_instance)
 	{
+		//test
 		USkeletalMeshComponent* p_child_mesh = GC_UTILTY::safe_map_value(m_map_child_mesh.Find(_i_custom_index));
 		if (p_child_mesh == nullptr)
 		{
@@ -208,6 +209,7 @@ void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UCl
 			}
 			m_map_child_mesh.Add(_i_custom_index, p_child_mesh);
 		}
+		// end test
 
 		if (p_child_mesh != m_p_root_mesh_componenet)
 		{
