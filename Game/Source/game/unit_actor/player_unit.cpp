@@ -35,8 +35,8 @@ void A_player_unit::_initialize(uint32 _uiUniqIndex)
 {
 	Super::_initialize(_uiUniqIndex);
 
-	change_mesh(0, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_body_0014.hero_meliodas_body_0014'"));
-	change_mesh(1, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_head_0000.hero_meliodas_head_0000'"));
+	change_mesh(0, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_body_0014.hero_meliodas_body_0014'"), 70);
+	change_mesh(1, TEXT("SkeletalMesh'/Game/Meliodas/mesh/hero_meliodas_head_0000.hero_meliodas_head_0000'"), 70);
 
 	set_anim_instance(TEXT("AnimBlueprint'/Game/Meliodas/anim_bp_meliodas.anim_bp_meliodas_C'"));
 }

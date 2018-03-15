@@ -50,14 +50,14 @@ void U_battle_scene::enter()
 	gGameCore->set_controll_unit(iIndex);
 	loaded_unit_list.Add(iIndex);
 
-	/*for (int i = 0; i < 500; ++i)
+	for (int i = 0; i < 500; ++i)
 	{
 		desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
 		desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
 		iIndex = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
 		loaded_unit_list.Add(iIndex);
-	}*/
-	
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
