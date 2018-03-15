@@ -59,7 +59,7 @@ void   U_input_manager::reset()
 
 void   U_input_manager::set_controll_unit(int32 _ui_unit_Index)
 {
-	A_base_unit* p_unit_instance = gGameCore->get_unit<A_base_unit>(m_ui_controll_unit_index);
+	A_base_unit* p_unit_instance = gGameCore->get_unit<A_base_unit>(_ui_unit_Index);
 	if (p_unit_instance != nullptr) 
 	{
 		m_ui_controll_unit_index = _ui_unit_Index;
