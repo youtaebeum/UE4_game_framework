@@ -10,7 +10,7 @@
 	"DocsURL": "https://brunoxavierleite.com/2016/07/03/ue4-finite-state-machine/",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/195d90d8cedf4b478a92036c059e2374",
 	"SupportURL": "mailto:bruno_xavier_@msn.com",
-	"EngineVersion": "4.18.0",
+	"EngineVersion": "4.19.0",
 	"CanContainContent": true,
 	"Installed": true,
 	"Modules": [

@@ -262,7 +262,7 @@ void A_base_unit::load_complite_mesh(const FStringAssetReference& _AssetRef, UCl
 			// set master pos
 			if (p_child_mesh->GetAttachParent() == m_p_master_mesh_componenet) 
 			{
-				if (m_p_master_mesh_componenet->GetSkeletalMeshResource() == nullptr) {
+				if (m_p_master_mesh_componenet->SkeletalMesh == nullptr) {
 					m_p_master_mesh_componenet->SetSkeletalMesh(ptr_instance.Get());
 				}
 				
