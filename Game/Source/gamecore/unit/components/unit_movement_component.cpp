@@ -16,12 +16,24 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 	FVector v_input_delta = compute_input_delta(DeltaTime);
 	ConsumeInputVector();
 
-	FVector v_velocity = compute_velocity(v_input_delta, DeltaTime);
-	m_v_acceleration = v_velocity * DeltaTime;
+	if (v_input_delta.IsNearlyZero() == false)
+	{
+		const FVector v_add = v_input_delta.GetSafeNormal() * m_f_move_acceleration * DeltaTime;
+		m_v_acceleration += v_add;
+		m_v_acceleration = (m_v_acceleration.Size() > m_f_max_move_speed) ? m_v_acceleration.GetSafeNormal() * m_f_max_move_speed : m_v_acceleration;
+	}
+	else
+	{
+		const FVector v_remove = m_v_acceleration.GetSafeNormal() * (-m_f_move_break) * DeltaTime;
+		m_v_acceleration = (m_v_acceleration.Size() > v_remove.Size()) ? (m_v_acceleration + v_remove) : (FVector::ZeroVector);
+	}
+
+	Velocity = m_v_acceleration * DeltaTime;
 
 	const FVector _v_gravity(0.f, 0.f, GetGravityZ());
-	Velocity = new_fall_velocity(v_velocity, _v_gravity, DeltaTime);
-	UpdateComponentVelocity();
+	Velocity = new_fall_velocity(Velocity, _v_gravity, DeltaTime);
+
+	//바닥체크 
 
 	//Additive Move (Velocity에 영향이 없는 이동 값에 대한 처리 (스킬 이동이나 밀림 등, RootMotion은 어떻게 처리 방법 고민 해야함)
 	FVector v_additive_delta = FVector::ZeroVector;
@@ -29,7 +41,7 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 
 	}
 	
-	FVector v_total_delta = m_v_acceleration + v_additive_delta;
+	FVector v_total_delta = Velocity + v_additive_delta;
 	if (v_total_delta.IsNearlyZero() == false) {
 		FHitResult     hit(1.f);
 		const FRotator r_old_rotation = UpdatedComponent->GetComponentRotation();
@@ -49,6 +61,8 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 		// Update velocity
 		//FVector vComponentVelocity = (UpdatedComponent->GetComponentLocation()-vOldLocation) / DeltaTime;	//SafeMoveUpdatedComponent()에 의해서 의도하지 않은 위치이동 처리가 Velocity에 영향을 줄 수 있다.
 	}
+
+	UpdateComponentVelocity();
 }
 
 FRotator U_unit_movement_component::compute_orient_to_movemenet_rotation(const FRotator& _r_rotation, float _f_delta_time, const FVector& _v_delta_vector)
@@ -88,7 +102,7 @@ FVector U_unit_movement_component::compute_input_delta(float _f_delta_time)
 	return v_input_delta;
 }
 
-FVector U_unit_movement_component::compute_velocity(const FVector& _v_input_delta, float _f_delta_time)
+FVector U_unit_movement_component::compute_acceleration(const FVector& _v_input_delta, float _f_delta_time)
 {
 	FVector v_result = Velocity;
 	if (_v_input_delta.IsNearlyZero() == false)

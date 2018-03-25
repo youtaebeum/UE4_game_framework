@@ -21,6 +21,7 @@ void U_unit_anim_instance::_tick(float _f_delta_time)
 		U_unit_movement_component* p_movement = Cast<U_unit_movement_component>(GetOwningActor()->GetComponentByClass(U_unit_movement_component::StaticClass()));
 		if (p_movement) {
 			m_v_velocity = p_movement->Velocity;
+			m_v_accelration = p_movement->get_acceleration();
 		}
 	}
 }

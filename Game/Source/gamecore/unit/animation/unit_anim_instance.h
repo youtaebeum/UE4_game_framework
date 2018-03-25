@@ -22,6 +22,9 @@ private:
 	UPROPERTY(Category = base_unit, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector m_v_velocity = FVector::ZeroVector;
 
+	UPROPERTY(Category = base_unit, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FVector m_v_accelration = FVector::ZeroVector;
+
 private:
 	class A_base_unit* m_p_owner_unit;
 
