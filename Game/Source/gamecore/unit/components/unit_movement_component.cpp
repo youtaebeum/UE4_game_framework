@@ -28,12 +28,11 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 		m_v_acceleration = (m_v_acceleration.Size() > v_remove.Size()) ? (m_v_acceleration + v_remove) : (FVector::ZeroVector);
 	}
 
-	Velocity = m_v_acceleration * DeltaTime;
-
+	FVector v_velocity = m_v_acceleration * DeltaTime;
 	const FVector _v_gravity(0.f, 0.f, GetGravityZ());
-	Velocity = new_fall_velocity(Velocity, _v_gravity, DeltaTime);
+	v_velocity = new_fall_velocity(v_velocity, _v_gravity, DeltaTime);
 
-	//바닥체크 
+	//바닥체크 (air상태인지 체크 하기 위함)
 
 	//Additive Move (Velocity에 영향이 없는 이동 값에 대한 처리 (스킬 이동이나 밀림 등, RootMotion은 어떻게 처리 방법 고민 해야함)
 	FVector v_additive_delta = FVector::ZeroVector;
@@ -41,7 +40,7 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 
 	}
 	
-	FVector v_total_delta = Velocity + v_additive_delta;
+	FVector v_total_delta = v_velocity + v_additive_delta;
 	if (v_total_delta.IsNearlyZero() == false) {
 		FHitResult     hit(1.f);
 		const FRotator r_old_rotation = UpdatedComponent->GetComponentRotation();
@@ -62,6 +61,7 @@ void U_unit_movement_component::TickComponent(float DeltaTime, enum ELevelTick T
 		//FVector vComponentVelocity = (UpdatedComponent->GetComponentLocation()-vOldLocation) / DeltaTime;	//SafeMoveUpdatedComponent()에 의해서 의도하지 않은 위치이동 처리가 Velocity에 영향을 줄 수 있다.
 	}
 
+	Velocity = v_velocity;
 	UpdateComponentVelocity();
 }
 
