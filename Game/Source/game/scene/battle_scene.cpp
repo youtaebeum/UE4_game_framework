@@ -43,54 +43,27 @@ void U_battle_scene::enter()
 
 	F_spawn_unit_desc desc;
 	desc._e_load_type = e_rsource_loading_type::async;
-//	m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
+	m_ui_self_unit = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
+	gGameCore->set_controll_unit(m_ui_self_unit);
 
-	int iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
-	A_player_unit* p_unit = gGameCore->get_unit<A_player_unit>(iIndex);
-	gGameCore->set_controll_unit(iIndex);
-	loaded_unit_list.Add(iIndex);
+//	int iIndex = gGameCore->spawn_unit<A_player_unit>(desc);
+//	A_player_unit* p_unit = gGameCore->get_unit<A_player_unit>(iIndex);
+//	gGameCore->set_controll_unit(iIndex);
+//	loaded_unit_list.Add(iIndex);
 
-	for (int i = 0; i < 500; ++i)
+	/*for (int i = 0; i < 500; ++i)
 	{
 		desc._v_location.X = FMath::RandRange(-5000.0f, 5000.0f);
 		desc._v_location.Y = FMath::RandRange(-5000.0f, 5000.0f);
-		iIndex = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
+		int iIndex = gGameCore->spawn_unit<A_player_prediction_unit>(desc);
 		loaded_unit_list.Add(iIndex);
-	}
+	}*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void U_battle_scene::update(float _f_delta_time)
 {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// test code
-	// controller attach
-	if (gGameCore->get_controll_unit_index() != GC_INDEX_NONE)
-	{
-		r_camera_rotation.Pitch = -25;
-		FVector v_camera_base_position = FVector(-200, 0.0f, 0.0f);
-		FVector v_camera_relative_location = FRotationMatrix(FRotator(r_camera_rotation)).TransformPosition(v_camera_base_position);
-		r_camera_rotation.Normalize();
-
-		A_base_unit* p_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index());
-		A_controller_pawn* p_controll_pawn = gGameCore->get_controller_pawn();
-		if (p_unit && p_controll_pawn)
-		{
-			v_camera_relative_location += p_unit->GetActorLocation();
-			p_controll_pawn->SetActorLocation(v_camera_relative_location);
-			p_controll_pawn->SetActorRotation(r_camera_rotation);
-
-			p_unit->BaseEyeHeight = 400.0f;
-
-			APlayerController* p_player_controller = gGameCore->get_player_controller();
-			GC_CHECK(p_player_controller != nullptr);
-
-			p_player_controller->SetControlRotation(r_camera_rotation);	//PlayerCamera의 Rotation을 적용하려면 Controller의 Rotation을 적용해줘야 한다.
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void U_battle_scene::exit()
@@ -118,7 +91,7 @@ void U_battle_scene::input_event_move(float _f_axis)
 	FVector v_input_axis = gGameCore->get_intput_move_axis();
 	if (v_input_axis.IsNearlyZero() == false)
 	{
-		A_base_unit* p_controll_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index()); // <- 이런 코드는 캐싱해서 쓰는게 좋을듯
+		A_base_unit* p_controll_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index());
 		APlayerController* p_player_controller = gGameCore->get_player_controller();
 		if (p_controll_unit && p_player_controller)
 		{

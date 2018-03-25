@@ -29,6 +29,32 @@ void A_controller_pawn::BeginPlay()
 void A_controller_pawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	///test
+	if (gGameCore->get_controll_unit_index() != GC_INDEX_NONE)
+	{
+		FRotator r_camera_rotation = FRotator(-25, 0, 0);
+		FVector v_camera_base_position = FVector(-200, 0.0f, 0.0f);
+		FVector v_camera_relative_location = FRotationMatrix(FRotator(r_camera_rotation)).TransformPosition(v_camera_base_position);
+		r_camera_rotation.Normalize();
+
+		A_base_unit* p_unit = gGameCore->get_unit(gGameCore->get_controll_unit_index());
+		A_controller_pawn* p_controll_pawn = gGameCore->get_controller_pawn();
+		if (p_unit && p_controll_pawn)
+		{
+			v_camera_relative_location += p_unit->GetActorLocation();
+			p_controll_pawn->SetActorLocation(v_camera_relative_location);
+			p_controll_pawn->SetActorRotation(r_camera_rotation);
+
+			p_unit->BaseEyeHeight = 400.0f;
+
+			APlayerController* p_player_controller = gGameCore->get_player_controller();
+			GC_CHECK(p_player_controller != nullptr);
+
+			p_player_controller->SetControlRotation(r_camera_rotation);	//PlayerCamera의 Rotation을 적용하려면 Controller의 Rotation을 적용해줘야 한다.
+		}
+	}
+	////
 }
 
 // Called to bind functionality to input

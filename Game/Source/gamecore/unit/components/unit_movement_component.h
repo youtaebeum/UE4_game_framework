@@ -31,7 +31,16 @@ public:
 	UPROPERTY(Category = "unit_movement", EditAnywhere, BlueprintReadOnly)
 	FRotator m_r_rotation_rate = FRotator(0, 720.0f, 0);
 
+protected:
+	UPROPERTY()	FVector m_v_acceleration; // moved delta
+
+public:
+	FVector get_acceleration();
+
 private:
 	FRotator compute_orient_to_movemenet_rotation(const FRotator& _r_rotation, float _f_delta_time, const FVector& _v_delta_vector);
 
+	FVector  compute_input_delta(float _f_delta_time);
+	FVector  compute_velocity(const FVector& _v_input_delta, float _f_delta_time);
+	FVector  new_fall_velocity(const FVector& _v_velocity, const FVector& _v_gravity, float _f_delta_time) const;
 };

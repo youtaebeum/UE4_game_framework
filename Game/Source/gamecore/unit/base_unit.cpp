@@ -23,9 +23,9 @@ A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
 
 	//////////////////////////////////////////////////////////////////////////
 	static FName scene_component_name(TEXT("root_scene"));
-	m_p_root_scene_componenet = CreateDefaultSubobject<USceneComponent>(scene_component_name);
-	m_p_root_scene_componenet->Mobility = EComponentMobility::Movable;
-	RootComponent = m_p_root_scene_componenet;
+	//m_p_root_scene_componenet = CreateDefaultSubobject<USceneComponent>(scene_component_name);
+	//m_p_root_scene_componenet->Mobility = EComponentMobility::Movable;
+	//RootComponent = m_p_root_scene_componenet;
 
 	//////////////////////////////////////////////////////////////////////////
 	static FName capsule_component_name(TEXT("root_collision"));
@@ -39,6 +39,8 @@ A_base_unit::A_base_unit(const FObjectInitializer& ObjectInitializer)
 	m_p_capsule_componenet->bDynamicObstacle = true;
 
 	m_p_capsule_componenet->SetHiddenInGame(false);
+
+	RootComponent = m_p_capsule_componenet;
 
 	//////////////////////////////////////////////////////////////////////////
 	static FName mesh_componenet_name(TEXT("master_mesh"));
@@ -78,6 +80,13 @@ void A_base_unit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (m_p_master_mesh_componenet) {
+		U_unit_anim_instance* anim_instance = Cast<U_unit_anim_instance>(m_p_master_mesh_componenet->GetAnimInstance());
+		if (anim_instance != nullptr) {
+			anim_instance->_tick(DeltaTime);
+		}
+	}
+
 	for (auto iter : m_map_child_mesh)
 	{
 		U_unit_anim_instance* anim_instance = Cast<U_unit_anim_instance>(iter.Value->GetAnimInstance());
@@ -93,7 +102,7 @@ void A_base_unit::_initialize(uint32 _uiUniqIndex)
 
 	m_ui_uniq_index = _uiUniqIndex;
 
-	m_p_root_scene_componenet->Activate();
+	//m_p_root_scene_componenet->Activate();
 	m_p_capsule_componenet->Activate();
 	m_p_master_mesh_componenet->Activate();
 	m_p_movement_component->Activate();
@@ -115,7 +124,7 @@ void A_base_unit::_reset()
 
 	m_ui_uniq_index = GC_INDEX_NONE;
 	
-	m_p_root_scene_componenet->Deactivate();
+	//m_p_root_scene_componenet->Deactivate();
 	m_p_capsule_componenet->Deactivate();
 	m_p_master_mesh_componenet->Deactivate();
 	m_p_movement_component->Deactivate();
